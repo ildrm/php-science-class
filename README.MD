@@ -18,7 +18,7 @@ This repository contains a collection of practical scientific classes for perfor
 To use this library, simply clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/yourusername/repository-name.git
+git clone https://github.com/ildrm/php-science-class.git
 ```
 
 ## Classes
