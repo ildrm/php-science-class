@@ -320,6 +320,193 @@ class ElectronicsCalculations {
     }
 
     /**
+     * Calculate node voltage using nodal analysis (simplified for a single node with known currents)
+     * @param array $currents Array of currents entering/leaving the node (A by default, positive for incoming, negative for outgoing)
+     * @param float $conductance Total conductance (1/R) at the node (S by default)
+     * @param string $unitCurrent Unit for current (default: "A", options: "mA")
+     * @param string $unitConductance Unit for conductance (default: "S", options: "mS")
+     * @param string $unitVoltage Unit for voltage (default: "V", options: "mV")
+     * @return float|string Node voltage or error message
+     */
+    public function nodalAnalysisSingleNode($currents, $conductance, $unitCurrent = "A", $unitConductance = "S", $unitVoltage = "V") {
+        if (!is_array($currents) || empty($currents)) return "Error: Currents array must be non-empty";
+        if ($conductance <= 0) return "Error: Conductance must be positive";
+
+        $sumCurrent = 0;
+        foreach ($currents as $current) {
+            if (!is_numeric($current)) return "Error: All currents must be numeric";
+            $convertedCurrent = $unitCurrent === "mA" ? $current / 1000 : $current; // mA to A
+            $sumCurrent += $convertedCurrent;
+        }
+
+        $convertedConductance = $unitConductance === "mS" ? $conductance / 1000 : $conductance; // mS to S
+        $result = $sumCurrent / $convertedConductance; // Voltage in V
+
+        if ($unitVoltage === "mV") return $result * 1000; // V to mV
+        return $result; // Default V
+    }
+
+    /**
+     * Calculate loop current using mesh analysis (simplified for a single loop)
+     * @param float $voltageSource Voltage source in the loop (V by default)
+     * @param array $resistances Array of resistances in the loop (Ω by default)
+     * @param string $unitVoltage Unit for voltage (default: "V", options: "mV")
+     * @param string $unitResistance Unit for resistance (default: "Ω", options: "kΩ")
+     * @param string $unitCurrent Unit for current (default: "A", options: "mA")
+     * @return float|string Loop current or error message
+     */
+    public function meshAnalysisSingleLoop($voltageSource, $resistances, $unitVoltage = "V", $unitResistance = "Ω", $unitCurrent = "A") {
+        if (!is_array($resistances) || empty($resistances)) return "Error: Resistances array must be non-empty";
+        
+        $totalResistance = 0;
+        foreach ($resistances as $r) {
+            if (!is_numeric($r) || $r <= 0) return "Error: All resistances must be positive numbers";
+            $convertedR = $unitResistance === "kΩ" ? $r * 1000 : $r; // kΩ to Ω
+            $totalResistance += $convertedR;
+        }
+
+        $convertedVoltage = $unitVoltage === "mV" ? $voltageSource / 1000 : $voltageSource; // mV to V
+        $result = $convertedVoltage / $totalResistance; // Current in A
+
+        if ($unitCurrent === "mA") return $result * 1000; // A to mA
+        return $result; // Default A
+    }
+
+    /**
+     * Calculate Thevenin equivalent voltage (simplified as open-circuit voltage)
+     * @param float $v Voltage across the load when open-circuited (V by default)
+     * @param string $unitVoltage Unit for voltage (default: "V", options: "mV")
+     * @return float|string Thevenin voltage or error message
+     */
+    public function theveninVoltage($v, $unitVoltage = "V") {
+        if (!is_numeric($v)) return "Error: Voltage must be numeric";
+
+        $result = $unitVoltage === "mV" ? $v / 1000 : $v; // mV to V
+        if ($unitVoltage === "mV") return $result * 1000; // V to mV (for output)
+        return $result; // Default V
+    }
+
+    /**
+     * Calculate Thevenin equivalent resistance (simplified as series resistance)
+     * @param array $resistances Array of resistances in the circuit (Ω by default)
+     * @param string $unitResistance Unit for resistance (default: "Ω", options: "kΩ")
+     * @return float|string Thevenin resistance or error message
+     */
+    public function theveninResistance($resistances, $unitResistance = "Ω") {
+        return $this->seriesResistance($resistances, $unitResistance); // Reuse seriesResistance function
+    }
+
+    /**
+     * Calculate capacitor voltage in an RC circuit during charging (transient response)
+     * @param float $vSource Source voltage (V by default)
+     * @param float $r Resistance (Ω by default)
+     * @param float $c Capacitance (F by default)
+     * @param float $t Time (s by default)
+     * @param string $unitVoltage Unit for voltage (default: "V", options: "mV")
+     * @param string $unitResistance Unit for resistance (default: "Ω", options: "kΩ")
+     * @param string $unitCapacitance Unit for capacitance (default: "F", options: "µF")
+     * @param string $unitTime Unit for time (default: "s", options: "ms")
+     * @return float|string Capacitor voltage or error message
+     */
+    public function rcTransientResponse($vSource, $r, $c, $t, $unitVoltage = "V", $unitResistance = "Ω", $unitCapacitance = "F", $unitTime = "s") {
+        if ($vSource < 0 || $r <= 0 || $c <= 0 || $t < 0) return "Error: Voltage, resistance, capacitance, and time must be non-negative";
+
+        // Convert units to SI base
+        $convertedVoltage = $unitVoltage === "mV" ? $vSource / 1000 : $vSource; // mV to V
+        $convertedResistance = $unitResistance === "kΩ" ? $r * 1000 : $r; // kΩ to Ω
+        $convertedCapacitance = $unitCapacitance === "µF" ? $c / 1e6 : $c; // µF to F
+        $convertedTime = $unitTime === "ms" ? $t / 1000 : $t; // ms to s
+
+        $tau = $convertedResistance * $convertedCapacitance; // Time constant in s
+        $result = $convertedVoltage * (1 - exp(-$convertedTime / $tau)); // Vc(t) = Vs * (1 - e^(-t/RC))
+
+        if ($unitVoltage === "mV") return $result * 1000; // V to mV
+        return $result; // Default V
+    }
+
+    /**
+     * Calculate resonant frequency of an RLC series circuit
+     * @param float $l Inductance (H by default)
+     * @param float $c Capacitance (F by default)
+     * @param string $unitInductance Unit for inductance (default: "H", options: "mH")
+     * @param string $unitCapacitance Unit for capacitance (default: "F", options: "µF")
+     * @param string $unitFrequency Unit for frequency (default: "Hz", options: "kHz")
+     * @return float|string Resonant frequency or error message
+     */
+    public function resonantFrequency($l, $c, $unitInductance = "H", $unitCapacitance = "F", $unitFrequency = "Hz") {
+        if ($l <= 0 || $c <= 0) return "Error: Inductance and capacitance must be positive";
+
+        // Convert units to SI base
+        $convertedInductance = $unitInductance === "mH" ? $l / 1000 : $l; // mH to H
+        $convertedCapacitance = $unitCapacitance === "µF" ? $c / 1e6 : $c; // µF to F
+
+        $result = 1 / (2 * M_PI * sqrt($convertedInductance * $convertedCapacitance)); // f₀ = 1 / (2π√(LC))
+
+        if ($unitFrequency === "kHz") return $result / 1000; // Hz to kHz
+        return $result; // Default Hz
+    }
+
+    /**
+     * Calculate real power in an AC circuit (P = V * I * cosφ)
+     * @param float $v Voltage (RMS, V by default)
+     * @param float $i Current (RMS, A by default)
+     * @param float $pf Power factor (cosφ, dimensionless)
+     * @param string $unitVoltage Unit for voltage (default: "V", options: "mV")
+     * @param string $unitCurrent Unit for current (default: "A", options: "mA")
+     * @param string $unitPower Unit for power (default: "W", options: "mW")
+     * @return float|string Real power or error message
+     */
+    public function realPowerAC($v, $i, $pf, $unitVoltage = "V", $unitCurrent = "A", $unitPower = "W") {
+        if ($v < 0 || $i < 0 || $pf < 0 || $pf > 1) return "Error: Voltage, current, and power factor must be non-negative, and power factor must be between 0 and 1";
+
+        // Convert units to SI base
+        $convertedVoltage = $unitVoltage === "mV" ? $v / 1000 : $v; // mV to V
+        $convertedCurrent = $unitCurrent === "mA" ? $i / 1000 : $i; // mA to A
+
+        $result = $convertedVoltage * $convertedCurrent * $pf; // P = V * I * cosφ
+
+        if ($unitPower === "mW") return $result * 1000; // W to mW
+        return $result; // Default W
+    }
+
+    /**
+     * Calculate reactive power in an AC circuit (Q = V * I * sinφ)
+     * @param float $v Voltage (RMS, V by default)
+     * @param float $i Current (RMS, A by default)
+     * @param float $pf Power factor (cosφ, dimensionless)
+     * @param string $unitVoltage Unit for voltage (default: "V", options: "mV")
+     * @param string $unitCurrent Unit for current (default: "A", options: "mA")
+     * @param string $unitPower Unit for power (default: "VAR", options: "mVAR")
+     * @return float|string Reactive power or error message
+     */
+    public function reactivePowerAC($v, $i, $pf, $unitVoltage = "V", $unitCurrent = "A", $unitPower = "VAR") {
+        if ($v < 0 || $i < 0 || $pf < 0 || $pf > 1) return "Error: Voltage, current, and power factor must be non-negative, and power factor must be between 0 and 1";
+
+        // Convert units to SI base
+        $convertedVoltage = $unitVoltage === "mV" ? $v / 1000 : $v; // mV to V
+        $convertedCurrent = $unitCurrent === "mA" ? $i / 1000 : $i; // mA to A
+
+        $sinPhi = sqrt(1 - pow($pf, 2)); // sinφ = √(1 - cos²φ)
+        $result = $convertedVoltage * $convertedCurrent * $sinPhi; // Q = V * I * sinφ
+
+        if ($unitPower === "mVAR") return $result * 1000; // VAR to mVAR
+        return $result; // Default VAR
+    }
+
+    /**
+     * Calculate apparent power in an AC circuit (S = V * I)
+     * @param float $v Voltage (RMS, V by default)
+     * @param float $i Current (RMS, A by default)
+     * @param string $unitVoltage Unit for voltage (default: "V", options: "mV")
+     * @param string $unitCurrent Unit for current (default: "A", options: "mA")
+     * @param string $unitPower Unit for power (default: "VA", options: "mVA")
+     * @return float|string Apparent power or error message
+     */
+    public function apparentPowerAC($v, $i, $unitVoltage = "V", $unitCurrent = "A", $unitPower = "VA") {
+        return $this->power($v, $i, $unitVoltage, $unitCurrent, $unitPower); // Reuse power function, just rename units
+    }
+
+    /**
      * Run tests for all functions, organized by groups
      * @return void
      */
@@ -402,6 +589,28 @@ class ElectronicsCalculations {
         echo "capacitiveReactance(60, 1e-6): " . $this->capacitiveReactance(60, 1e-6) . " Ω (Expected: ~2652.5824)\n";
         echo "// Test capacitive reactance with f=1 kHz, C=10 µF, unitReactance='kΩ'\n";
         echo "capacitiveReactance(1, 10, 'kHz', 'µF', 'kΩ'): " . $this->capacitiveReactance(1, 10, 'kHz', 'µF', 'kΩ') . " kΩ (Expected: ~0.0159)\n";
+
+        // Group 6: Advanced Circuit Analysis
+        echo "\nGroup 6: Advanced Circuit Analysis\n";
+        echo "-------------------------\n";
+        echo "// Test nodal analysis with currents [0.1, -0.05] A, conductance=0.2 S\n";
+        echo "nodalAnalysisSingleNode([0.1, -0.05], 0.2): " . $this->nodalAnalysisSingleNode([0.1, -0.05], 0.2) . " V (Expected: 0.25)\n";
+        echo "// Test mesh analysis with V=10 V, resistances [2, 3] Ω\n";
+        echo "meshAnalysisSingleLoop(10, [2, 3]): " . $this->meshAnalysisSingleLoop(10, [2, 3]) . " A (Expected: 2)\n";
+        echo "// Test Thevenin voltage with V=5 V\n";
+        echo "theveninVoltage(5): " . $this->theveninVoltage(5) . " V (Expected: 5)\n";
+        echo "// Test Thevenin resistance with resistances [10, 20] Ω\n";
+        echo "theveninResistance([10, 20]): " . $this->theveninResistance([10, 20]) . " Ω (Expected: 30)\n";
+        echo "// Test RC transient response with Vs=10 V, R=1000 Ω, C=1e-6 F, t=0.001 s\n";
+        echo "rcTransientResponse(10, 1000, 1e-6, 0.001): " . $this->rcTransientResponse(10, 1000, 1e-6, 0.001) . " V (Expected: ~6.3212)\n";
+        echo "// Test resonant frequency with L=0.1 H, C=1e-6 F\n";
+        echo "resonantFrequency(0.1, 1e-6): " . $this->resonantFrequency(0.1, 1e-6) . " Hz (Expected: ~503.292)\n";
+        echo "// Test real power in AC with V=120 V, I=2 A, pf=0.8\n";
+        echo "realPowerAC(120, 2, 0.8): " . $this->realPowerAC(120, 2, 0.8) . " W (Expected: 192)\n";
+        echo "// Test reactive power in AC with V=120 V, I=2 A, pf=0.8\n";
+        echo "reactivePowerAC(120, 2, 0.8): " . $this->reactivePowerAC(120, 2, 0.8) . " VAR (Expected: 144)\n";
+        echo "// Test apparent power in AC with V=120 V, I=2 A\n";
+        echo "apparentPowerAC(120, 2): " . $this->apparentPowerAC(120, 2) . " VA (Expected: 240)\n";
     
         // Error Condition Tests
         echo "\nError Condition Tests\n";
@@ -418,6 +627,10 @@ class ElectronicsCalculations {
         echo "inductorVoltage(0.1, 2, 0): " . $this->inductorVoltage(0.1, 2, 0) . " (Expected: Error: Time change must be positive)\n";
         echo "// Test capacitorCurrent with C= -1e-6 F\n";
         echo "capacitorCurrent(-1e-6, 10, 0.001): " . $this->capacitorCurrent(-1e-6, 10, 0.001) . " (Expected: Error: Capacitance cannot be negative)\n";
+        echo "// Test nodalAnalysisSingleNode with zero conductance\n";
+        echo "nodalAnalysisSingleNode([0.1], 0): " . $this->nodalAnalysisSingleNode([0.1], 0) . " (Expected: Error: Conductance must be positive)\n";
+        echo "// Test rcTransientResponse with negative time\n";
+        echo "rcTransientResponse(10, 1000, 1e-6, -0.001): " . $this->rcTransientResponse(10, 1000, 1e-6, -0.001) . " (Expected: Error: Voltage, resistance, capacitance, and time must be non-negative)\n";
     
         echo "----------------------------------------\n";
         echo "End of Tests\n";
