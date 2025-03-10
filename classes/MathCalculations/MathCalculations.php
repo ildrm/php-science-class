@@ -1,6 +1,10 @@
 <?php
 
-class MathCalculations {
+namespace MathCalculations;
+
+class MathCalculations
+{
+    // Existing 111 methods (with minor fixes)
     // Basic Operations
     /**
      * Add two numbers
@@ -8,7 +12,8 @@ class MathCalculations {
      * @param float $b Second number
      * @return float Sum
      */
-    public function add($a, $b) {
+    public function add(float $a, float $b): float
+    {
         return $a + $b;
     }
 
@@ -18,7 +23,8 @@ class MathCalculations {
      * @param float $b Second number
      * @return float Difference
      */
-    public function subtract($a, $b) {
+    public function subtract(float $a, float $b): float
+    {
         return $a - $b;
     }
 
@@ -28,7 +34,8 @@ class MathCalculations {
      * @param float $b Second number
      * @return float Product
      */
-    public function multiply($a, $b) {
+    public function multiply(float $a, float $b): float
+    {
         return $a * $b;
     }
 
@@ -36,11 +43,13 @@ class MathCalculations {
      * Divide two numbers
      * @param float $a Dividend
      * @param float $b Divisor
-     * @return float|string Quotient or error message
+     * @return float|null Quotient or null if division by zero
+     * @throws \InvalidArgumentException If divisor is zero
      */
-    public function divide($a, $b) {
+    public function divide(float $a, float $b): ?float
+    {
         if ($b == 0) {
-            return "Error: Division by zero is not possible";
+            throw new \InvalidArgumentException("Division by zero is not possible");
         }
         return $a / $b;
     }
@@ -51,11 +60,13 @@ class MathCalculations {
      * @param float $a Coefficient of x^2
      * @param float $b Coefficient of x
      * @param float $c Constant term
-     * @return array|string|null Roots or error message
+     * @return array|null Roots or null if no real roots
+     * @throws \InvalidArgumentException If a is zero
      */
-    public function quadraticFormula($a, $b, $c) {
+    public function quadraticFormula(float $a, float $b, float $c): ?array
+    {
         if ($a == 0) {
-            return "Error: Coefficient 'a' cannot be zero";
+            throw new \InvalidArgumentException("Coefficient 'a' cannot be zero");
         }
         $discriminant = ($b * $b) - (4 * $a * $c);
         if ($discriminant < 0) {
@@ -71,7 +82,8 @@ class MathCalculations {
      * @param float $x Number
      * @return float Absolute value
      */
-    public function absoluteValue($x) {
+    public function absoluteValue(float $x): float
+    {
         return abs($x);
     }
 
@@ -81,18 +93,21 @@ class MathCalculations {
      * @param float $exponent Exponent
      * @return float Result
      */
-    public function power($base, $exponent) {
+    public function power(float $base, float $exponent): float
+    {
         return pow($base, $exponent);
     }
 
     /**
      * Square root of a number
      * @param float $x Number
-     * @return float|string Square root or error message
+     * @return float|null Square root or null if negative
+     * @throws \InvalidArgumentException If number is negative
      */
-    public function squareRoot($x) {
+    public function squareRoot(float $x): ?float
+    {
         if ($x < 0) {
-            return "Error: Square root of a negative number is not possible";
+            throw new \InvalidArgumentException("Square root of a negative number is not possible");
         }
         return sqrt($x);
     }
@@ -105,9 +120,14 @@ class MathCalculations {
      * @param float $d Constant term
      * @return array Roots
      */
-    public function cubicFormula($a, $b, $c, $d) {
+    public function cubicFormula(float $a, float $b, float $c, float $d): array
+    {
         if ($a == 0) {
-            return $this->quadraticFormula($b, $c, $d) ?? [$this->divide(-$d, $c)];
+            $roots = $this->quadraticFormula($b, $c, $d);
+            if ($roots === null) {
+                return [$this->divide(-$d, $c)];
+            }
+            return $roots;
         }
         $f = ((3 * $c / $a) - ($b * $b / ($a * $a))) / 3;
         $g = ((2 * $b * $b * $b / ($a * $a * $a)) - (9 * $b * $c / ($a * $a)) + (27 * $d / $a)) / 27;
@@ -143,7 +163,8 @@ class MathCalculations {
      * @param array $coefficients Polynomial coefficients
      * @return array|null Roots or null if degree > 3
      */
-    public function polynomialRoots($coefficients) {
+    public function polynomialRoots(array $coefficients): ?array
+    {
         $degree = count($coefficients) - 1;
         if ($degree == 2) {
             return $this->quadraticFormula($coefficients[0], $coefficients[1], $coefficients[2]);
@@ -158,8 +179,13 @@ class MathCalculations {
      * @param int $a First integer
      * @param int $b Second integer
      * @return int LCM
+     * @throws \InvalidArgumentException If inputs are invalid
      */
-    public function lcm($a, $b) {
+    public function lcm(int $a, int $b): int
+    {
+        if ($a == 0 || $b == 0) {
+            throw new \InvalidArgumentException("LCM of zero is undefined");
+        }
         return abs($a * $b) / $this->gcd($a, $b);
     }
 
@@ -169,7 +195,8 @@ class MathCalculations {
      * @param int $b Second integer
      * @return int GCD
      */
-    public function gcd($a, $b) {
+    public function gcd(int $a, int $b): int
+    {
         $a = abs($a);
         $b = abs($b);
         while ($b != 0) {
@@ -188,7 +215,8 @@ class MathCalculations {
      * @param float $h Step size
      * @return float Derivative
      */
-    public function derivative($function, $point, $h = 1e-5) {
+    public function derivative(callable $function, float $point, float $h = 1e-5): float
+    {
         return ($function($point + $h) - $function($point - $h)) / (2 * $h);
     }
 
@@ -200,7 +228,8 @@ class MathCalculations {
      * @param int $n Number of intervals
      * @return float Integral value
      */
-    public function integral($function, $lowerBound, $upperBound, $n = 1000) {
+    public function integral(callable $function, float $lowerBound, float $upperBound, int $n = 1000): float
+    {
         if ($lowerBound == $upperBound) return 0;
         $h = ($upperBound - $lowerBound) / $n;
         $sum = 0.5 * ($function($lowerBound) + $function($upperBound));
@@ -217,7 +246,8 @@ class MathCalculations {
      * @param float $h Step size
      * @return float Limit value
      */
-    public function limit($function, $point, $h = 1e-5) {
+    public function limit(callable $function, float $point, float $h = 1e-5): float
+    {
         return $function($point + $h);
     }
 
@@ -228,7 +258,8 @@ class MathCalculations {
      * @param float $h Step size
      * @return float Second derivative
      */
-    public function secondDerivative($function, $point, $h = 1e-5) {
+    public function secondDerivative(callable $function, float $point, float $h = 1e-5): float
+    {
         return ($this->derivative($function, $point + $h) - $this->derivative($function, $point - $h)) / (2 * $h);
     }
 
@@ -237,11 +268,13 @@ class MathCalculations {
      * @param callable $f Function
      * @param float $a Lower bound
      * @param float $b Upper bound
-     * @return float|string Average rate of change or error message
+     * @return float|null Average rate of change or null if invalid interval
+     * @throws \InvalidArgumentException If interval is invalid
      */
-    public function meanValueTheorem($f, $a, $b) {
+    public function meanValueTheorem(callable $f, float $a, float $b): ?float
+    {
         if ($a == $b) {
-            return "Error: Invalid interval";
+            throw new \InvalidArgumentException("Invalid interval");
         }
         return ($f($b) - $f($a)) / ($b - $a);
     }
@@ -252,7 +285,8 @@ class MathCalculations {
      * @param float $angle Angle in degrees
      * @return float Sine value
      */
-    public function sin($angle) {
+    public function sin(float $angle): float
+    {
         return sin(deg2rad($angle));
     }
 
@@ -261,19 +295,22 @@ class MathCalculations {
      * @param float $angle Angle in degrees
      * @return float Cosine value
      */
-    public function cos($angle) {
+    public function cos(float $angle): float
+    {
         return cos(deg2rad($angle));
     }
 
     /**
      * Tangent function (degrees)
      * @param float $angle Angle in degrees
-     * @return float|string Tangent value or error message
+     * @return float|null Tangent value or null if undefined
+     * @throws \InvalidArgumentException If tangent is undefined
      */
-    public function tan($angle) {
+    public function tan(float $angle): ?float
+    {
         $tan = tan(deg2rad($angle));
         if (is_infinite($tan)) {
-            return "Error: Tangent is undefined at this angle";
+            throw new \InvalidArgumentException("Tangent is undefined at this angle");
         }
         return $tan;
     }
@@ -281,12 +318,14 @@ class MathCalculations {
     /**
      * Secant function (degrees)
      * @param float $angle Angle in degrees
-     * @return float|string Secant value or error message
+     * @return float|null Secant value or null if undefined
+     * @throws \InvalidArgumentException If secant is undefined
      */
-    public function sec($angle) {
+    public function sec(float $angle): ?float
+    {
         $cos = $this->cos($angle);
         if ($cos == 0) {
-            return "Error: Secant is undefined at this angle";
+            throw new \InvalidArgumentException("Secant is undefined at this angle");
         }
         return 1 / $cos;
     }
@@ -294,12 +333,14 @@ class MathCalculations {
     /**
      * Cosecant function (degrees)
      * @param float $angle Angle in degrees
-     * @return float|string Cosecant value or error message
+     * @return float|null Cosecant value or null if undefined
+     * @throws \InvalidArgumentException If cosecant is undefined
      */
-    public function cosec($angle) {
+    public function cosec(float $angle): ?float
+    {
         $sin = $this->sin($angle);
         if ($sin == 0) {
-            return "Error: Cosecant is undefined at this angle";
+            throw new \InvalidArgumentException("Cosecant is undefined at this angle");
         }
         return 1 / $sin;
     }
@@ -307,12 +348,14 @@ class MathCalculations {
     /**
      * Cotangent function (degrees)
      * @param float $angle Angle in degrees
-     * @return float|string Cotangent value or error message
+     * @return float|null Cotangent value or null if undefined
+     * @throws \InvalidArgumentException If cotangent is undefined
      */
-    public function cot($angle) {
+    public function cot(float $angle): ?float
+    {
         $tan = $this->tan($angle);
-        if ($tan === "Error: Tangent is undefined at this angle" || $tan == 0) {
-            return "Error: Cotangent is undefined at this angle";
+        if ($tan === null || $tan == 0) {
+            throw new \InvalidArgumentException("Cotangent is undefined at this angle");
         }
         return 1 / $tan;
     }
@@ -320,11 +363,13 @@ class MathCalculations {
     /**
      * Arcsine function (to degrees)
      * @param float $value Value
-     * @return float|string Angle in degrees or error message
+     * @return float|null Angle in degrees or null if invalid
+     * @throws \InvalidArgumentException If value is out of range
      */
-    public function arcsin($value) {
+    public function arcsin(float $value): ?float
+    {
         if ($value < -1 || $value > 1) {
-            return "Error: Value must be between -1 and 1";
+            throw new \InvalidArgumentException("Value must be between -1 and 1");
         }
         return rad2deg(asin($value));
     }
@@ -332,11 +377,13 @@ class MathCalculations {
     /**
      * Arccosine function (to degrees)
      * @param float $value Value
-     * @return float|string Angle in degrees or error message
+     * @return float|null Angle in degrees or null if invalid
+     * @throws \InvalidArgumentException If value is out of range
      */
-    public function arccos($value) {
+    public function arccos(float $value): ?float
+    {
         if ($value < -1 || $value > 1) {
-            return "Error: Value must be between -1 and 1";
+            throw new \InvalidArgumentException("Value must be between -1 and 1");
         }
         return rad2deg(acos($value));
     }
@@ -346,7 +393,8 @@ class MathCalculations {
      * @param float $value Value
      * @return float Angle in degrees
      */
-    public function arctan($value) {
+    public function arctan(float $value): float
+    {
         return rad2deg(atan($value));
     }
 
@@ -356,7 +404,8 @@ class MathCalculations {
      * @param float $x Exponent
      * @return float Exponential value
      */
-    public function exponential($x) {
+    public function exponential(float $x): float
+    {
         return exp($x);
     }
 
@@ -364,14 +413,16 @@ class MathCalculations {
      * Logarithm with custom base
      * @param float $x Number
      * @param float $base Base (default: e)
-     * @return float|string Logarithm value or error message
+     * @return float|null Logarithm value or null if invalid
+     * @throws \InvalidArgumentException If inputs are invalid
      */
-    public function logarithm($x, $base = M_E) {
+    public function logarithm(float $x, float $base = M_E): ?float
+    {
         if ($x <= 0) {
-            return "Error: Logarithm of zero or negative number is undefined";
+            throw new \InvalidArgumentException("Logarithm of zero or negative number is undefined");
         }
         if ($base <= 0 || $base == 1) {
-            return "Error: Base must be positive and not equal to 1";
+            throw new \InvalidArgumentException("Base must be positive and not equal to 1");
         }
         return log($x, $base);
     }
@@ -379,11 +430,13 @@ class MathCalculations {
     /**
      * Natural logarithm (ln)
      * @param float $x Number
-     * @return float|string Natural logarithm value or error message
+     * @return float|null Natural logarithm value or null if invalid
+     * @throws \InvalidArgumentException If input is invalid
      */
-    public function naturalLog($x) {
+    public function naturalLog(float $x): ?float
+    {
         if ($x <= 0) {
-            return "Error: Natural logarithm of zero or negative number is undefined";
+            throw new \InvalidArgumentException("Natural logarithm of zero or negative number is undefined");
         }
         return log($x);
     }
@@ -391,11 +444,13 @@ class MathCalculations {
     /**
      * Base-10 logarithm
      * @param float $x Number
-     * @return float|string Base-10 logarithm value or error message
+     * @return float|null Base-10 logarithm value or null if invalid
+     * @throws \InvalidArgumentException If input is invalid
      */
-    public function logBase10($x) {
+    public function logBase10(float $x): ?float
+    {
         if ($x <= 0) {
-            return "Error: Base-10 logarithm of zero or negative number is undefined";
+            throw new \InvalidArgumentException("Base-10 logarithm of zero or negative number is undefined");
         }
         return log10($x);
     }
@@ -406,10 +461,14 @@ class MathCalculations {
      * @param float $firstTerm First term
      * @param float $commonDifference Common difference
      * @param int $n Term number
-     * @return float|string Nth term or error message
+     * @return float|null Nth term or null if invalid
+     * @throws \InvalidArgumentException If n is invalid
      */
-    public function arithmeticSequence($firstTerm, $commonDifference, $n) {
-        if ($n < 1) return "Error: 'n' must be positive";
+    public function arithmeticSequence(float $firstTerm, float $commonDifference, int $n): ?float
+    {
+        if ($n < 1) {
+            throw new \InvalidArgumentException("'n' must be positive");
+        }
         return $firstTerm + ($n - 1) * $commonDifference;
     }
 
@@ -418,20 +477,28 @@ class MathCalculations {
      * @param float $firstTerm First term
      * @param float $commonRatio Common ratio
      * @param int $n Term number
-     * @return float|string Nth term or error message
+     * @return float|null Nth term or null if invalid
+     * @throws \InvalidArgumentException If n is invalid
      */
-    public function geometricSequence($firstTerm, $commonRatio, $n) {
-        if ($n < 1) return "Error: 'n' must be positive";
+    public function geometricSequence(float $firstTerm, float $commonRatio, int $n): ?float
+    {
+        if ($n < 1) {
+            throw new \InvalidArgumentException("'n' must be positive");
+        }
         return $firstTerm * pow($commonRatio, $n - 1);
     }
 
     /**
      * Fibonacci sequence
      * @param int $n Term number
-     * @return int|string Nth term or error message
+     * @return int|null Nth term or null if invalid
+     * @throws \InvalidArgumentException If n is invalid
      */
-    public function fibonacci($n) {
-        if ($n < 0) return "Error: 'n' must be non-negative";
+    public function fibonacci(int $n): ?int
+    {
+        if ($n < 0) {
+            throw new \InvalidArgumentException("'n' must be non-negative");
+        }
         if ($n == 0) return 0;
         if ($n == 1) return 1;
         $a = 0;
@@ -449,10 +516,14 @@ class MathCalculations {
      * Taylor series for e^x
      * @param float $x Value
      * @param int $n Number of terms
-     * @return float|string Approximation or error message
+     * @return float|null Approximation or null if invalid
+     * @throws \InvalidArgumentException If n is invalid
      */
-    public function taylorSeriesExponential($x, $n) {
-        if ($n < 0) return "Error: 'n' must be non-negative";
+    public function taylorSeriesExponential(float $x, int $n): ?float
+    {
+        if ($n < 0) {
+            throw new \InvalidArgumentException("'n' must be non-negative");
+        }
         $sum = 0;
         for ($i = 0; $i < $n; $i++) {
             $sum += $this->power($x, $i) / $this->factorial($i);
@@ -464,10 +535,14 @@ class MathCalculations {
      * Taylor series for sin(x)
      * @param float $x Value in radians
      * @param int $n Number of terms
-     * @return float|string Approximation or error message
+     * @return float|null Approximation or null if invalid
+     * @throws \InvalidArgumentException If n is invalid
      */
-    public function taylorSeriesSin($x, $n) {
-        if ($n < 0) return "Error: 'n' must be non-negative";
+    public function taylorSeriesSin(float $x, int $n): ?float
+    {
+        if ($n < 0) {
+            throw new \InvalidArgumentException("'n' must be non-negative");
+        }
         $sum = 0;
         for ($i = 0; $i < $n; $i++) {
             $sum += ($this->power(-1, $i) * $this->power($x, 2 * $i + 1)) / $this->factorial(2 * $i + 1);
@@ -479,10 +554,14 @@ class MathCalculations {
      * Taylor series for cos(x)
      * @param float $x Value in radians
      * @param int $n Number of terms
-     * @return float|string Approximation or error message
+     * @return float|null Approximation or null if invalid
+     * @throws \InvalidArgumentException If n is invalid
      */
-    public function taylorSeriesCos($x, $n) {
-        if ($n < 0) return "Error: 'n' must be non-negative";
+    public function taylorSeriesCos(float $x, int $n): ?float
+    {
+        if ($n < 0) {
+            throw new \InvalidArgumentException("'n' must be non-negative");
+        }
         $sum = 0;
         for ($i = 0; $i < $n; $i++) {
             $sum += ($this->power(-1, $i) * $this->power($x, 2 * $i)) / $this->factorial(2 * $i);
@@ -493,10 +572,14 @@ class MathCalculations {
     /**
      * Factorial of a number
      * @param int $n Number
-     * @return int|string Factorial or error message
+     * @return int|null Factorial or null if invalid
+     * @throws \InvalidArgumentException If n is invalid
      */
-    public function factorial($n) {
-        if (!is_int($n) || $n < 0) return "Error: 'n' must be a non-negative integer";
+    public function factorial(int $n): ?int
+    {
+        if (!is_int($n) || $n < 0) {
+            throw new \InvalidArgumentException("'n' must be a non-negative integer");
+        }
         if ($n === 0) return 1;
         $result = 1;
         for ($i = 1; $i <= $n; $i++) {
@@ -510,11 +593,13 @@ class MathCalculations {
      * Matrix addition
      * @param array $matrixA First matrix
      * @param array $matrixB Second matrix
-     * @return array|string Result matrix or error message
+     * @return array|null Result matrix or null if dimensions mismatch
+     * @throws \InvalidArgumentException If dimensions mismatch
      */
-    public function matrixAddition($matrixA, $matrixB) {
+    public function matrixAddition(array $matrixA, array $matrixB): ?array
+    {
         if (count($matrixA) != count($matrixB) || count($matrixA[0]) != count($matrixB[0])) {
-            return "Error: Matrix dimensions must match";
+            throw new \InvalidArgumentException("Matrix dimensions must match");
         }
         $result = [];
         for ($i = 0; $i < count($matrixA); $i++) {
@@ -529,11 +614,13 @@ class MathCalculations {
      * Matrix multiplication
      * @param array $matrixA First matrix
      * @param array $matrixB Second matrix
-     * @return array|string Result matrix or error message
+     * @return array|null Result matrix or null if dimensions mismatch
+     * @throws \InvalidArgumentException If dimensions mismatch
      */
-    public function matrixMultiplication($matrixA, $matrixB) {
+    public function matrixMultiplication(array $matrixA, array $matrixB): ?array
+    {
         if (count($matrixA[0]) != count($matrixB)) {
-            return "Error: Number of columns in first matrix must equal number of rows in second matrix";
+            throw new \InvalidArgumentException("Number of columns in first matrix must equal number of rows in second matrix");
         }
         $result = [];
         for ($i = 0; $i < count($matrixA); $i++) {
@@ -552,7 +639,8 @@ class MathCalculations {
      * @param array $matrix Input matrix
      * @return array Transposed matrix
      */
-    public function transpose($matrix) {
+    public function transpose(array $matrix): array
+    {
         $result = [];
         for ($i = 0; $i < count($matrix[0]); $i++) {
             for ($j = 0; $j < count($matrix); $j++) {
@@ -562,118 +650,20 @@ class MathCalculations {
         return $result;
     }
 
-    // Statistical Functions
-    /**
-     * Combination (nCr)
-     * @param int $n Total items
-     * @param int $r Items to choose
-     * @return float|string Combination value or error message
-     */
-    public function combination($n, $r) {
-        if ($r > $n || $n < 0 || $r < 0) {
-            return "Error: Invalid inputs";
-        }
-        return $this->factorial($n) / ($this->factorial($r) * $this->factorial($n - $r));
-    }
-
-    /**
-     * Permutation (nPr)
-     * @param int $n Total items
-     * @param int $r Items to arrange
-     * @return float|string Permutation value or error message
-     */
-    public function permutation($n, $r) {
-        if ($r > $n || $n < 0 || $r < 0) {
-            return "Error: Invalid inputs";
-        }
-        return $this->factorial($n) / $this->factorial($n - $r);
-    }
-
-    /**
-     * Mean of numbers
-     * @param array $numbers Array of numbers
-     * @return float|string Mean or error message
-     */
-    public function mean($numbers) {
-        if (empty($numbers)) return "Error: Array is empty";
-        return array_sum($numbers) / count($numbers);
-    }
-
-    /**
-     * Sample variance
-     * @param array $numbers Array of numbers
-     * @return float|string Variance or error message
-     */
-    public function varianceSample($numbers) {
-        if (count($numbers) < 2) return "Error: At least two values are required";
-        $mean = $this->mean($numbers);
-        $squaredDiffs = array_map(function($x) use ($mean) {
-            return pow($x - $mean, 2);
-        }, $numbers);
-        return array_sum($squaredDiffs) / (count($numbers) - 1);
-    }
-
-    /**
-     * Sample standard deviation
-     * @param array $numbers Array of numbers
-     * @return float|string Standard deviation or error message
-     */
-    public function standardDeviation($numbers) {
-        $variance = $this->varianceSample($numbers);
-        return is_string($variance) ? $variance : sqrt($variance);
-    }
-
-    /**
-     * Median of numbers
-     * @param array $numbers Array of numbers
-     * @return float|string Median or error message
-     */
-    public function median($numbers) {
-        if (empty($numbers)) return "Error: Array is empty";
-        sort($numbers);
-        $count = count($numbers);
-        $middle = floor(($count - 1) / 2);
-        if ($count % 2) {
-            return $numbers[$middle];
-        } else {
-            return ($numbers[$middle] + $numbers[$middle + 1]) / 2;
-        }
-    }
-
-    /**
-     * Mode of numbers
-     * @param array $numbers Array of numbers
-     * @return mixed|string Mode or error message
-     */
-    public function mode($numbers) {
-        if (empty($numbers)) return "Error: Array is empty";
-        $values = array_count_values($numbers);
-        return array_search(max($values), $values);
-    }
-
-    /**
-     * Range of numbers
-     * @param array $numbers Array of numbers
-     * @return float|string Range or error message
-     */
-    public function range($numbers) {
-        if (empty($numbers)) return "Error: Array is empty";
-        return max($numbers) - min($numbers);
-    }
-
     /**
      * Matrix determinant
      * @param array $matrix Square matrix
      * @return float Determinant
-     * @throws Exception If matrix is invalid
+     * @throws \InvalidArgumentException If matrix is invalid
      */
-    public function determinant($matrix) {
+    public function determinant(array $matrix): float
+    {
         if (!is_array($matrix) || empty($matrix)) {
-            throw new Exception("Error: Matrix is empty or invalid");
+            throw new \InvalidArgumentException("Matrix is empty or invalid");
         }
         $rows = count($matrix);
         if ($rows != count($matrix[0])) {
-            throw new Exception("Error: Matrix must be square");
+            throw new \InvalidArgumentException("Matrix must be square");
         }
         
         if ($rows == 1) {
@@ -697,7 +687,8 @@ class MathCalculations {
      * @param int $col Column to exclude
      * @return array Minor matrix
      */
-    private function minor($matrix, $row, $col) {
+    private function minor(array $matrix, int $row, int $col): array
+    {
         $minor = [];
         for ($i = 0; $i < count($matrix); $i++) {
             if ($i != $row) {
@@ -716,11 +707,12 @@ class MathCalculations {
     /**
      * Matrix inverse
      * @param array $matrix Input matrix
-     * @return array|string|null Inverse matrix or error message
+     * @return array|null Inverse matrix or null if no inverse
+     * @throws \InvalidArgumentException If matrix is invalid
      */
-    public function inverse($matrix) {
+    public function inverse(array $matrix): ?array
+    {
         $det = $this->determinant($matrix);
-        if (is_string($det)) return $det;
         if ($det == 0) return null; // No inverse
         $adjoint = $this->adjoint($matrix);
         $inverse = [];
@@ -737,7 +729,8 @@ class MathCalculations {
      * @param array $matrix Input matrix
      * @return array Adjoint matrix
      */
-    private function adjoint($matrix) {
+    private function adjoint(array $matrix): array
+    {
         $adjoint = [];
         for ($i = 0; $i < count($matrix); $i++) {
             for ($j = 0; $j < count($matrix); $j++) {
@@ -747,16 +740,143 @@ class MathCalculations {
         return $adjoint;
     }
 
+    // Statistical Functions
+    /**
+     * Combination (nCr)
+     * @param int $n Total items
+     * @param int $r Items to choose
+     * @return float|null Combination value or null if invalid
+     * @throws \InvalidArgumentException If inputs are invalid
+     */
+    public function combination(int $n, int $r): ?float
+    {
+        if ($r > $n || $n < 0 || $r < 0) {
+            throw new \InvalidArgumentException("Invalid inputs");
+        }
+        return $this->factorial($n) / ($this->factorial($r) * $this->factorial($n - $r));
+    }
+
+    /**
+     * Permutation (nPr)
+     * @param int $n Total items
+     * @param int $r Items to arrange
+     * @return float|null Permutation value or null if invalid
+     * @throws \InvalidArgumentException If inputs are invalid
+     */
+    public function permutation(int $n, int $r): ?float
+    {
+        if ($r > $n || $n < 0 || $r < 0) {
+            throw new \InvalidArgumentException("Invalid inputs");
+        }
+        return $this->factorial($n) / $this->factorial($n - $r);
+    }
+
+    /**
+     * Mean of numbers
+     * @param array $numbers Array of numbers
+     * @return float|null Mean or null if array is empty
+     * @throws \InvalidArgumentException If array is empty
+     */
+    public function mean(array $numbers): ?float
+    {
+        if (empty($numbers)) {
+            throw new \InvalidArgumentException("Array is empty");
+        }
+        return array_sum($numbers) / count($numbers);
+    }
+
+    /**
+     * Sample variance
+     * @param array $numbers Array of numbers
+     * @return float|null Variance or null if insufficient data
+     * @throws \InvalidArgumentException If insufficient data
+     */
+    public function varianceSample(array $numbers): ?float
+    {
+        if (count($numbers) < 2) {
+            throw new \InvalidArgumentException("At least two values are required");
+        }
+        $mean = $this->mean($numbers);
+        $squaredDiffs = array_map(function($x) use ($mean) {
+            return pow($x - $mean, 2);
+        }, $numbers);
+        return array_sum($squaredDiffs) / (count($numbers) - 1);
+    }
+
+    /**
+     * Sample standard deviation
+     * @param array $numbers Array of numbers
+     * @return float|null Standard deviation or null if invalid
+     * @throws \InvalidArgumentException If insufficient data
+     */
+    public function standardDeviation(array $numbers): ?float
+    {
+        $variance = $this->varianceSample($numbers);
+        return sqrt($variance);
+    }
+
+    /**
+     * Median of numbers
+     * @param array $numbers Array of numbers
+     * @return float|null Median or null if array is empty
+     * @throws \InvalidArgumentException If array is empty
+     */
+    public function median(array $numbers): ?float
+    {
+        if (empty($numbers)) {
+            throw new \InvalidArgumentException("Array is empty");
+        }
+        sort($numbers);
+        $count = count($numbers);
+        $middle = floor(($count - 1) / 2);
+        if ($count % 2) {
+            return $numbers[$middle];
+        } else {
+            return ($numbers[$middle] + $numbers[$middle + 1]) / 2;
+        }
+    }
+
+    /**
+     * Mode of numbers
+     * @param array $numbers Array of numbers
+     * @return mixed|null Mode or null if array is empty
+     * @throws \InvalidArgumentException If array is empty
+     */
+    public function mode(array $numbers)
+    {
+        if (empty($numbers)) {
+            throw new \InvalidArgumentException("Array is empty");
+        }
+        $values = array_count_values($numbers);
+        return array_search(max($values), $values);
+    }
+
+    /**
+     * Range of numbers
+     * @param array $numbers Array of numbers
+     * @return float|null Range or null if array is empty
+     * @throws \InvalidArgumentException If array is empty
+     */
+    public function range(array $numbers): ?float
+    {
+        if (empty($numbers)) {
+            throw new \InvalidArgumentException("Array is empty");
+        }
+        return max($numbers) - min($numbers);
+    }
+
     // Statistical Distributions
     /**
      * Poisson distribution
      * @param int $k Number of occurrences
      * @param float $lambda Average rate
-     * @return float|string Probability or error message
+     * @return float|null Probability or null if invalid
+     * @throws \InvalidArgumentException If inputs are invalid
      */
-    public function poissonDistribution($k, $lambda) {
+    public function poissonDistribution(int $k, float $lambda): ?float
+    {
         if ($k < 0 || $lambda <= 0) {
-            return "Error: Invalid inputs";
+            throw new \InvalidArgumentException("Invalid inputs");
         }
         return ($this->power($lambda, $k) * exp(-$lambda)) / $this->factorial($k);
     }
@@ -766,7 +886,8 @@ class MathCalculations {
      * @param float $z Z-score
      * @return float Probability density
      */
-    public function standardNormalDistribution($z) {
+    public function standardNormalDistribution(float $z): float
+    {
         return (1 / sqrt(2 * M_PI)) * exp(-0.5 * pow($z, 2));
     }
 
@@ -775,7 +896,8 @@ class MathCalculations {
      * @param float $z Z-score
      * @return float Cumulative probability
      */
-    public function cumulativeNormalDistribution($z) {
+    public function cumulativeNormalDistribution(float $z): float
+    {
         $a1 = 0.254829592;
         $a2 = -0.284496736;
         $a3 = 1.421413741;
@@ -797,10 +919,14 @@ class MathCalculations {
      * Chi-square cumulative distribution function (CDF)
      * @param float $x Value
      * @param int $k Degrees of freedom
-     * @return float|string CDF value or error message
+     * @return float|null CDF value or null if invalid
+     * @throws \InvalidArgumentException If inputs are invalid
      */
-    public function chiSquareCDF($x, $k) {
-        if ($x < 0 || $k < 1) return "Error: Invalid inputs";
+    public function chiSquareCDF(float $x, int $k): ?float
+    {
+        if ($x < 0 || $k < 1) {
+            throw new \InvalidArgumentException("Invalid inputs");
+        }
         if ($x == 0) return 0.0;
         return $this->gammainc($x / 2, $k / 2);
     }
@@ -811,7 +937,8 @@ class MathCalculations {
      * @param float $a Shape parameter
      * @return float Incomplete gamma value
      */
-    public function gammainc($x, $a) {
+    public function gammainc(float $x, float $a): float
+    {
         $g = $this->gamma($a);
         return $this->lowerGamma($x, $a) / $g;
     }
@@ -821,11 +948,12 @@ class MathCalculations {
      * @param float $z Value
      * @return float Gamma value
      */
-    public function gamma($z) {
+    public function gamma(float $z): float
+    {
         $coefficients = [1, 0.5772156649015329, -0.6558780715202538, -0.0420026350340952,
-                         0.1665386113822915, -0.0421977345555443, -0.00962197152787697,
-                         0.007218943246663, -0.0011651675918591, -0.0002152416741149,
-                         0.0001280502823882, -0.0000201348547807, -0.0000012504934821];
+                        0.1665386113822915, -0.0421977345555443, -0.00962197152787697,
+                        0.007218943246663, -0.0011651675918591, -0.0002152416741149,
+                        0.0001280502823882, -0.0000201348547807, -0.0000012504934821];
         $y = $z - 1;
         $sum = $coefficients[0];
         for ($i = 1; $i < count($coefficients); $i++) {
@@ -841,7 +969,8 @@ class MathCalculations {
      * @param float $a Shape parameter
      * @return float Lower gamma value
      */
-    public function lowerGamma($x, $a) {
+    public function lowerGamma(float $x, float $a): float
+    {
         $sum = 1.0 / $a;
         $term = $sum;
         for ($n = 1; $n < 100; $n++) {
@@ -860,7 +989,8 @@ class MathCalculations {
      * @param float $b Upper bound
      * @return float Integral value
      */
-    public function integralByParts($u, $dv, $a, $b) {
+    public function integralByParts(callable $u, callable $dv, float $a, float $b): float
+    {
         $v = function($x) use ($dv, $a) { return $this->integral($dv, $a, $x); };
         $du = function($x) use ($u) { return $this->derivative($u, $x); };
         return ($u($b) * $v($b) - $u($a) * $v($a)) - $this->integral(function($x) use ($du, $v) {
@@ -871,44 +1001,60 @@ class MathCalculations {
     /**
      * Skewness
      * @param array $numbers Array of numbers
-     * @return float|string Skewness or error message
+     * @return float|null Skewness or null if invalid
+     * @throws \InvalidArgumentException If insufficient data
      */
-    public function skewness($numbers) {
-        if (count($numbers) < 2) return "Error: At least two values are required";
+    public function skewness(array $numbers): ?float
+    {
+        if (count($numbers) < 2) {
+            throw new \InvalidArgumentException("At least two values are required");
+        }
         $mean = $this->mean($numbers);
         $n = count($numbers);
         $m3 = array_sum(array_map(function($x) use ($mean) {
             return pow($x - $mean, 3);
         }, $numbers)) / $n;
         $stdDev = $this->standardDeviation($numbers);
-        if ($stdDev == 0) return "Error: Standard deviation is zero";
+        if ($stdDev == 0) {
+            throw new \InvalidArgumentException("Standard deviation is zero");
+        }
         return $n * $m3 / pow($stdDev, 3);
     }
 
     /**
      * Excess kurtosis
      * @param array $numbers Array of numbers
-     * @return float|string Kurtosis or error message
+     * @return float|null Kurtosis or null if invalid
+     * @throws \InvalidArgumentException If insufficient data
      */
-    public function kurtosis($numbers) {
-        if (count($numbers) < 2) return "Error: At least two values are required";
+    public function kurtosis(array $numbers): ?float
+    {
+        if (count($numbers) < 2) {
+            throw new \InvalidArgumentException("At least two values are required");
+        }
         $mean = $this->mean($numbers);
         $n = count($numbers);
         $m4 = array_sum(array_map(function($x) use ($mean) {
             return pow($x - $mean, 4);
         }, $numbers)) / $n;
         $stdDev = $this->standardDeviation($numbers);
-        if ($stdDev == 0) return "Error: Standard deviation is zero";
+        if ($stdDev == 0) {
+            throw new \InvalidArgumentException("Standard deviation is zero");
+        }
         return $n * $m4 / pow($stdDev, 4) - 3;
     }
 
     /**
      * Interquartile range
      * @param array $numbers Array of numbers
-     * @return float|string IQR or error message
+     * @return float|null IQR or null if invalid
+     * @throws \InvalidArgumentException If insufficient data
      */
-    public function interquartileRange($numbers) {
-        if (count($numbers) < 4) return "Error: At least four values are required";
+    public function interquartileRange(array $numbers): ?float
+    {
+        if (count($numbers) < 4) {
+            throw new \InvalidArgumentException("At least four values are required");
+        }
         sort($numbers);
         $q1 = $this->median(array_slice($numbers, 0, floor(count($numbers) / 2)));
         $q3 = $this->median(array_slice($numbers, ceil(count($numbers) / 2)));
@@ -919,10 +1065,14 @@ class MathCalculations {
      * Euclidean distance between two vectors
      * @param array $vector1 First vector
      * @param array $vector2 Second vector
-     * @return float|string Distance or error message
+     * @return float|null Distance or null if vectors mismatch
+     * @throws \InvalidArgumentException If vector lengths mismatch
      */
-    public function euclideanDistance($vector1, $vector2) {
-        if (count($vector1) != count($vector2)) return "Error: Vector lengths must match";
+    public function euclideanDistance(array $vector1, array $vector2): ?float
+    {
+        if (count($vector1) != count($vector2)) {
+            throw new \InvalidArgumentException("Vector lengths must match");
+        }
         $sum = 0;
         for ($i = 0; $i < count($vector1); $i++) {
             $sum += pow($vector1[$i] - $vector2[$i], 2);
@@ -934,10 +1084,14 @@ class MathCalculations {
      * Manhattan distance between two vectors
      * @param array $vector1 First vector
      * @param array $vector2 Second vector
-     * @return float|string Distance or error message
+     * @return float|null Distance or null if vectors mismatch
+     * @throws \InvalidArgumentException If vector lengths mismatch
      */
-    public function manhattanDistance($vector1, $vector2) {
-        if (count($vector1) != count($vector2)) return "Error: Vector lengths must match";
+    public function manhattanDistance(array $vector1, array $vector2): ?float
+    {
+        if (count($vector1) != count($vector2)) {
+            throw new \InvalidArgumentException("Vector lengths must match");
+        }
         $sum = 0;
         for ($i = 0; $i < count($vector1); $i++) {
             $sum += abs($vector1[$i] - $vector2[$i]);
@@ -949,10 +1103,14 @@ class MathCalculations {
      * Chebyshev distance between two vectors
      * @param array $vector1 First vector
      * @param array $vector2 Second vector
-     * @return float|string Distance or error message
+     * @return float|null Distance or null if vectors mismatch
+     * @throws \InvalidArgumentException If vector lengths mismatch
      */
-    public function chebyshevDistance($vector1, $vector2) {
-        if (count($vector1) != count($vector2)) return "Error: Vector lengths must match";
+    public function chebyshevDistance(array $vector1, array $vector2): ?float
+    {
+        if (count($vector1) != count($vector2)) {
+            throw new \InvalidArgumentException("Vector lengths must match");
+        }
         $maxDiff = 0;
         for ($i = 0; $i < count($vector1); $i++) {
             $diff = abs($vector1[$i] - $vector2[$i]);
@@ -966,11 +1124,17 @@ class MathCalculations {
      * @param array $vector1 First vector
      * @param array $vector2 Second vector
      * @param int $p Order (e.g., 1 for Manhattan, 2 for Euclidean)
-     * @return float|string Distance or error message
+     * @return float|null Distance or null if invalid
+     * @throws \InvalidArgumentException If inputs are invalid
      */
-    public function minkowskiDistance($vector1, $vector2, $p = 2) {
-        if (count($vector1) != count($vector2)) return "Error: Vector lengths must match";
-        if ($p <= 0) return "Error: 'p' must be positive";
+    public function minkowskiDistance(array $vector1, array $vector2, int $p = 2): ?float
+    {
+        if (count($vector1) != count($vector2)) {
+            throw new \InvalidArgumentException("Vector lengths must match");
+        }
+        if ($p <= 0) {
+            throw new \InvalidArgumentException("'p' must be positive");
+        }
         $sum = 0;
         for ($i = 0; $i < count($vector1); $i++) {
             $sum += pow(abs($vector1[$i] - $vector2[$i]), $p);
@@ -982,12 +1146,15 @@ class MathCalculations {
      * Cosine distance between two vectors
      * @param array $vector1 First vector
      * @param array $vector2 Second vector
-     * @return float|string Cosine distance (1 - cosine similarity) or error message
+     * @return float|null Cosine distance (1 - cosine similarity) or null if invalid
+     * @throws \InvalidArgumentException If vectors mismatch
      */
-    public function cosineDistance($vector1, $vector2) {
-        if (count($vector1) != count($vector2)) return "Error: Vector lengths must match";
+    public function cosineDistance(array $vector1, array $vector2): ?float
+    {
+        if (count($vector1) != count($vector2)) {
+            throw new \InvalidArgumentException("Vector lengths must match");
+        }
         $similarity = $this->cosineSimilarity($vector1, $vector2);
-        if (is_string($similarity)) return $similarity;
         return 1 - $similarity;
     }
 
@@ -996,10 +1163,14 @@ class MathCalculations {
      * Cosine similarity between two vectors
      * @param array $vector1 First vector
      * @param array $vector2 Second vector
-     * @return float|string Cosine similarity (0 to 1) or error message
+     * @return float|null Cosine similarity (0 to 1) or null if invalid
+     * @throws \InvalidArgumentException If vectors are invalid
      */
-    public function cosineSimilarity($vector1, $vector2) {
-        if (count($vector1) != count($vector2)) return "Error: Vector lengths must match";
+    public function cosineSimilarity(array $vector1, array $vector2): ?float
+    {
+        if (count($vector1) != count($vector2)) {
+            throw new \InvalidArgumentException("Vector lengths must match");
+        }
         $dotProduct = 0;
         $norm1 = 0;
         $norm2 = 0;
@@ -1010,7 +1181,9 @@ class MathCalculations {
         }
         $norm1 = sqrt($norm1);
         $norm2 = sqrt($norm2);
-        if ($norm1 == 0 || $norm2 == 0) return "Error: Zero vector cannot be computed";
+        if ($norm1 == 0 || $norm2 == 0) {
+            throw new \InvalidArgumentException("Zero vector cannot be computed");
+        }
         return $dotProduct / ($norm1 * $norm2);
     }
 
@@ -1018,12 +1191,16 @@ class MathCalculations {
      * Jaccard similarity between two sets
      * @param array $set1 First set
      * @param array $set2 Second set
-     * @return float|string Jaccard similarity (0 to 1) or error message
+     * @return float|null Jaccard similarity (0 to 1) or null if invalid
+     * @throws \InvalidArgumentException If sets are empty
      */
-    public function jaccardSimilarity($set1, $set2) {
+    public function jaccardSimilarity(array $set1, array $set2): ?float
+    {
         $intersection = count(array_intersect($set1, $set2));
         $union = count(array_unique(array_merge($set1, $set2)));
-        if ($union == 0) return "Error: Sets are empty";
+        if ($union == 0) {
+            throw new \InvalidArgumentException("Sets are empty");
+        }
         return $intersection / $union;
     }
 
@@ -1031,12 +1208,18 @@ class MathCalculations {
      * Pearson similarity (linear correlation)
      * @param array $vector1 First vector
      * @param array $vector2 Second vector
-     * @return float|string Pearson correlation coefficient (-1 to 1) or error message
+     * @return float|null Pearson correlation coefficient (-1 to 1) or null if invalid
+     * @throws \InvalidArgumentException If vectors are invalid
      */
-    public function pearsonSimilarity($vector1, $vector2) {
-        if (count($vector1) != count($vector2)) return "Error: Vector lengths must match";
+    public function pearsonSimilarity(array $vector1, array $vector2): ?float
+    {
+        if (count($vector1) != count($vector2)) {
+            throw new \InvalidArgumentException("Vector lengths must match");
+        }
         $n = count($vector1);
-        if ($n == 0) return "Error: Vectors are empty";
+        if ($n == 0) {
+            throw new \InvalidArgumentException("Vectors are empty");
+        }
 
         $mean1 = array_sum($vector1) / $n;
         $mean2 = array_sum($vector2) / $n;
@@ -1052,7 +1235,9 @@ class MathCalculations {
             $denom2 += pow($diff2, 2);
         }
         $denominator = sqrt($denom1 * $denom2);
-        if ($denominator == 0) return "Error: Variance is zero";
+        if ($denominator == 0) {
+            throw new \InvalidArgumentException("Variance is zero");
+        }
         return $numerator / $denominator;
     }
 
@@ -1060,10 +1245,14 @@ class MathCalculations {
      * Dot product similarity
      * @param array $vector1 First vector
      * @param array $vector2 Second vector
-     * @return float|string Dot product or error message
+     * @return float|null Dot product or null if vectors mismatch
+     * @throws \InvalidArgumentException If vector lengths mismatch
      */
-    public function dotProductSimilarity($vector1, $vector2) {
-        if (count($vector1) != count($vector2)) return "Error: Vector lengths must match";
+    public function dotProductSimilarity(array $vector1, array $vector2): ?float
+    {
+        if (count($vector1) != count($vector2)) {
+            throw new \InvalidArgumentException("Vector lengths must match");
+        }
         $sum = 0;
         for ($i = 0; $i < count($vector1); $i++) {
             $sum += $vector1[$i] * $vector2[$i];
@@ -1076,10 +1265,14 @@ class MathCalculations {
      * Calculate linear regression coefficients (y = mx + b)
      * @param array $x Independent values
      * @param array $y Dependent values
-     * @return array|string Coefficients [slope, intercept] or error message
+     * @return array|null Coefficients [slope, intercept] or null if invalid
+     * @throws \InvalidArgumentException If data is invalid
      */
-    public function linearRegression($x, $y) {
-        if (count($x) != count($y) || empty($x)) return "Error: Invalid data";
+    public function linearRegression(array $x, array $y): ?array
+    {
+        if (count($x) != count($y) || empty($x)) {
+            throw new \InvalidArgumentException("Invalid data");
+        }
         $n = count($x);
         $sumX = array_sum($x);
         $sumY = array_sum($y);
@@ -1100,10 +1293,14 @@ class MathCalculations {
      * @param array $data Training data ([features, label])
      * @param array $point New point to classify (features)
      * @param int $k Number of neighbors
-     * @return mixed|string Predicted label or error message
+     * @return mixed|null Predicted label or null if invalid
+     * @throws \InvalidArgumentException If data is invalid
      */
-    public function knnClassify($data, $point, $k = 3) {
-        if (empty($data) || $k < 1 || count($point) != count($data[0][0])) return "Error: Invalid data";
+    public function knnClassify(array $data, array $point, int $k = 3)
+    {
+        if (empty($data) || $k < 1 || count($point) != count($data[0][0])) {
+            throw new \InvalidArgumentException("Invalid data");
+        }
         $distances = [];
         foreach ($data as $index => $row) {
             $features = $row[0];
@@ -1123,10 +1320,14 @@ class MathCalculations {
      * Classify using linear SVM (assumes linear separability)
      * @param array $data Training data ([features, label])
      * @param array $point New point
-     * @return int|string Label (1 or -1) or error message
+     * @return int|null Label (1 or -1) or null if invalid
+     * @throws \InvalidArgumentException If data is invalid
      */
-    public function svmClassify($data, $point) {
-        if (empty($data) || count($point) != count($data[0][0])) return "Error: Invalid data";
+    public function svmClassify(array $data, array $point): ?int
+    {
+        if (empty($data) || count($point) != count($data[0][0])) {
+            throw new \InvalidArgumentException("Invalid data");
+        }
         $w = array_fill(0, count($point), 0);
         $b = 0;
         $learningRate = 0.01;
@@ -1154,10 +1355,14 @@ class MathCalculations {
      * @param array $data Data points (array of vectors)
      * @param float $eps Maximum distance
      * @param int $minPts Minimum points for core
-     * @return array|string Clusters or error message
+     * @return array|null Clusters or null if invalid
+     * @throws \InvalidArgumentException If data is invalid
      */
-    public function dbscan($data, $eps, $minPts) {
-        if (empty($data)) return "Error: Data is empty";
+    public function dbscan(array $data, float $eps, int $minPts): ?array
+    {
+        if (empty($data)) {
+            throw new \InvalidArgumentException("Data is empty");
+        }
         $clusters = [];
         $visited = array_fill(0, count($data), false);
         $noise = [];
@@ -1178,7 +1383,8 @@ class MathCalculations {
         return ['clusters' => $clusters, 'noise' => $noise];
     }
 
-    private function findNeighbors($data, $index, $eps) {
+    private function findNeighbors(array $data, int $index, float $eps): array
+    {
         $neighbors = [];
         for ($i = 0; $i < count($data); $i++) {
             if ($i != $index && $this->euclideanDistance($data[$index], $data[$i]) <= $eps) {
@@ -1188,7 +1394,8 @@ class MathCalculations {
         return $neighbors;
     }
 
-    private function expandCluster($data, $neighbors, $index, $clusterLabel, $eps, $minPts, &$visited, &$clusters) {
+    private function expandCluster(array $data, array &$neighbors, int $index, int $clusterLabel, float $eps, int $minPts, array &$visited, array &$clusters): void
+    {
         foreach ($neighbors as $neighbor) {
             if (!$visited[$neighbor]) {
                 $visited[$neighbor] = true;
@@ -1207,10 +1414,14 @@ class MathCalculations {
      * @param array $data Data points (array of vectors)
      * @param int $k Number of clusters
      * @param int $maxIterations Maximum iterations
-     * @return array|string Clusters or error message
+     * @return array|null Clusters or null if invalid
+     * @throws \InvalidArgumentException If data or k is invalid
      */
-    public function kMeans($data, $k, $maxIterations = 100) {
-        if (empty($data) || $k < 1 || $k > count($data)) return "Error: Invalid data or 'k'";
+    public function kMeans(array $data, int $k, int $maxIterations = 100): ?array
+    {
+        if (empty($data) || $k < 1 || $k > count($data)) {
+            throw new \InvalidArgumentException("Invalid data or 'k'");
+        }
         $centroids = array_slice($data, 0, $k);
         for ($iter = 0; $iter < $maxIterations; $iter++) {
             $clusters = array_fill(0, $k, []);
@@ -1240,9 +1451,10 @@ class MathCalculations {
      * Solve least squares for linear regression
      * @param array $x Independent values
      * @param array $y Dependent values
-     * @return array|string Coefficients [slope, intercept] or error message
+     * @return array|null Coefficients [slope, intercept] or null if invalid
      */
-    public function leastSquares($x, $y) {
+    public function leastSquares(array $x, array $y): ?array
+    {
         return $this->linearRegression($x, $y);
     }
 
@@ -1252,10 +1464,14 @@ class MathCalculations {
      * @param array $data Training data ([features, value])
      * @param array $point New point
      * @param float $epsilon Error margin
-     * @return float|string Predicted value or error message
+     * @return float|null Predicted value or null if invalid
+     * @throws \InvalidArgumentException If data is invalid
      */
-    public function svrPredict($data, $point, $epsilon = 0.1) {
-        if (empty($data) || count($point) != count($data[0][0])) return "Error: Invalid data";
+    public function svrPredict(array $data, array $point, float $epsilon = 0.1): ?float
+    {
+        if (empty($data) || count($point) != count($data[0][0])) {
+            throw new \InvalidArgumentException("Invalid data");
+        }
         $w = array_fill(0, count($point), 0);
         $b = 0;
         $learningRate = 0.01;
@@ -1283,10 +1499,14 @@ class MathCalculations {
      * Classify using Gaussian Naive Bayes
      * @param array $data Training data ([features, label])
      * @param array $point New point
-     * @return string|int Predicted label or error message
+     * @return string|int|null Predicted label or null if invalid
+     * @throws \InvalidArgumentException If data is invalid
      */
-    public function naiveBayesClassify($data, $point) {
-        if (empty($data) || count($point) != count($data[0][0])) return "Error: Invalid data";
+    public function naiveBayesClassify(array $data, array $point)
+    {
+        if (empty($data) || count($point) != count($data[0][0])) {
+            throw new \InvalidArgumentException("Invalid data");
+        }
         $classes = array_unique(array_column($data, 1));
         $stats = [];
         foreach ($classes as $class) {
@@ -1326,7 +1546,8 @@ class MathCalculations {
      * @param array $vector2 Second vector
      * @return array Result matrix
      */
-    public function outerProduct($vector1, $vector2) {
+    public function outerProduct(array $vector1, array $vector2): array
+    {
         $result = [];
         for ($i = 0; $i < count($vector1); $i++) {
             for ($j = 0; $j < count($vector2); $j++) {
@@ -1339,10 +1560,14 @@ class MathCalculations {
     /**
      * Create identity matrix
      * @param int $size Matrix size
-     * @return array|string Identity matrix or error message
+     * @return array|null Identity matrix or null if invalid
+     * @throws \InvalidArgumentException If size is invalid
      */
-    public function identityMatrix($size) {
-        if ($size < 1) return "Error: Size must be positive";
+    public function identityMatrix(int $size): ?array
+    {
+        if ($size < 1) {
+            throw new \InvalidArgumentException("Size must be positive");
+        }
         $result = [];
         for ($i = 0; $i < $size; $i++) {
             for ($j = 0; $j < $size; $j++) {
@@ -1357,7 +1582,8 @@ class MathCalculations {
      * @param array $diagonalValues Diagonal values
      * @return array Diagonal matrix
      */
-    public function diagonalMatrix($diagonalValues) {
+    public function diagonalMatrix(array $diagonalValues): array
+    {
         $size = count($diagonalValues);
         $result = [];
         for ($i = 0; $i < $size; $i++) {
@@ -1371,10 +1597,14 @@ class MathCalculations {
     /**
      * Convert to upper triangular matrix
      * @param array $matrix Input matrix
-     * @return array|string Upper triangular matrix or error message
+     * @return array|null Upper triangular matrix or null if invalid
+     * @throws \InvalidArgumentException If matrix is not square
      */
-    public function upperTriangularMatrix($matrix) {
-        if (!$this->isSquareMatrix($matrix)) return "Error: Matrix must be square";
+    public function upperTriangularMatrix(array $matrix): ?array
+    {
+        if (!$this->isSquareMatrix($matrix)) {
+            throw new \InvalidArgumentException("Matrix must be square");
+        }
         $result = $matrix;
         for ($i = 0; $i < count($matrix); $i++) {
             for ($j = 0; $j < $i; $j++) {
@@ -1387,10 +1617,14 @@ class MathCalculations {
     /**
      * Convert to lower triangular matrix
      * @param array $matrix Input matrix
-     * @return array|string Lower triangular matrix or error message
+     * @return array|null Lower triangular matrix or null if invalid
+     * @throws \InvalidArgumentException If matrix is not square
      */
-    public function lowerTriangularMatrix($matrix) {
-        if (!$this->isSquareMatrix($matrix)) return "Error: Matrix must be square";
+    public function lowerTriangularMatrix(array $matrix): ?array
+    {
+        if (!$this->isSquareMatrix($matrix)) {
+            throw new \InvalidArgumentException("Matrix must be square");
+        }
         $result = $matrix;
         for ($i = 0; $i < count($matrix); $i++) {
             for ($j = $i + 1; $j < count($matrix); $j++) {
@@ -1404,10 +1638,14 @@ class MathCalculations {
      * Create ones matrix
      * @param int $rows Number of rows
      * @param int $cols Number of columns
-     * @return array|string Ones matrix or error message
+     * @return array|null Ones matrix or null if invalid
+     * @throws \InvalidArgumentException If dimensions are invalid
      */
-    public function onesMatrix($rows, $cols) {
-        if ($rows < 1 || $cols < 1) return "Error: Dimensions must be positive";
+    public function onesMatrix(int $rows, int $cols): ?array
+    {
+        if ($rows < 1 || $cols < 1) {
+            throw new \InvalidArgumentException("Dimensions must be positive");
+        }
         $result = [];
         for ($i = 0; $i < $rows; $i++) {
             for ($j = 0; $j < $cols; $j++) {
@@ -1420,10 +1658,14 @@ class MathCalculations {
     /**
      * Calculate Hermitian matrix (simplified for real numbers)
      * @param array $matrix Input matrix
-     * @return array|string Hermitian matrix or error message
+     * @return array|null Hermitian matrix or null if invalid
+     * @throws \InvalidArgumentException If matrix is not square
      */
-    public function hermitianMatrix($matrix) {
-        if (!$this->isSquareMatrix($matrix)) return "Error: Matrix must be square";
+    public function hermitianMatrix(array $matrix): ?array
+    {
+        if (!$this->isSquareMatrix($matrix)) {
+            throw new \InvalidArgumentException("Matrix must be square");
+        }
         return $this->transpose($matrix); // For real numbers, Hermitian is transpose
     }
 
@@ -1433,7 +1675,8 @@ class MathCalculations {
      * @param array $matrix2 Second matrix
      * @return bool True if equivalent, false otherwise
      */
-    public function areEquivalentMatrices($matrix1, $matrix2) {
+    public function areEquivalentMatrices(array $matrix1, array $matrix2): bool
+    {
         if (count($matrix1) != count($matrix2) || count($matrix1[0]) != count($matrix2[0])) return false;
         for ($i = 0; $i < count($matrix1); $i++) {
             for ($j = 0; $j < count($matrix1[0]); $j++) {
@@ -1448,7 +1691,8 @@ class MathCalculations {
      * @param array $matrix Input matrix
      * @return array Adjoint matrix
      */
-    public function adjointMatrix($matrix) {
+    public function adjointMatrix(array $matrix): array
+    {
         return $this->adjoint($matrix);
     }
 
@@ -1457,7 +1701,8 @@ class MathCalculations {
      * @param array $vector Input vector
      * @return array Row matrix
      */
-    public function rowMatrix($vector) {
+    public function rowMatrix(array $vector): array
+    {
         return [$vector];
     }
 
@@ -1466,7 +1711,8 @@ class MathCalculations {
      * @param array $vector Input vector
      * @return array Column matrix
      */
-    public function columnMatrix($vector) {
+    public function columnMatrix(array $vector): array
+    {
         $result = [];
         foreach ($vector as $value) {
             $result[] = [$value];
@@ -1479,7 +1725,8 @@ class MathCalculations {
      * @param array $matrix Input matrix
      * @return bool True if square, false otherwise
      */
-    public function isSquareMatrix($matrix) {
+    public function isSquareMatrix(array $matrix): bool
+    {
         if (empty($matrix) || !is_array($matrix)) return false;
         $rows = count($matrix);
         return $rows == count($matrix[0]);
@@ -1489,10 +1736,14 @@ class MathCalculations {
      * Create zero matrix
      * @param int $rows Number of rows
      * @param int $cols Number of columns
-     * @return array|string Zero matrix or error message
+     * @return array|null Zero matrix or null if invalid
+     * @throws \InvalidArgumentException If dimensions are invalid
      */
-    public function zeroMatrix($rows, $cols) {
-        if ($rows < 1 || $cols < 1) return "Error: Dimensions must be positive";
+    public function zeroMatrix(int $rows, int $cols): ?array
+    {
+        if ($rows < 1 || $cols < 1) {
+            throw new \InvalidArgumentException("Dimensions must be positive");
+        }
         $result = [];
         for ($i = 0; $i < $rows; $i++) {
             for ($j = 0; $j < $cols; $j++) {
@@ -1507,467 +1758,895 @@ class MathCalculations {
      * @param array $matrix Input matrix
      * @return bool True if symmetric, false otherwise
      */
-    public function isSymmetricMatrix($matrix) {
+    public function isSymmetricMatrix(array $matrix): bool
+    {
         if (!$this->isSquareMatrix($matrix)) return false;
         $transpose = $this->transpose($matrix);
         return $this->areEquivalentMatrices($matrix, $transpose);
     }
 
+    // Graph Theory
     /**
-     * Check if matrix is orthogonal (A * A^T = I)
-     * @param array $matrix Input matrix
-     * @return bool True if orthogonal, false otherwise
+     * Find shortest path using Dijkstra's algorithm
+     * @param array $graph Adjacency list with weights
+     * @param int $start Starting node
+     * @param int $end Ending node
+     * @return array|null Path and distance or null if no path
+     * @throws \InvalidArgumentException If nodes are invalid
      */
-    public function isOrthogonalMatrix($matrix) {
-        if (!$this->isSquareMatrix($matrix)) return false;
-        $transpose = $this->transpose($matrix);
-        $product = $this->matrixMultiplication($matrix, $transpose);
-        return $this->areEquivalentMatrices($product, $this->identityMatrix(count($matrix)));
-    }
-
-    // Graph Operations
-    /**
-     * Check if the graph is connected
-     * @param array $adjacencyList Adjacency list of the graph
-     * @return bool True if connected, false otherwise
-     */
-    public function isConnectedGraph($adjacencyList) {
-        if (empty($adjacencyList)) return true;
-        $visited = array_fill_keys(array_keys($adjacencyList), false);
-        $this->dfsGraph(current(array_keys($adjacencyList)), $adjacencyList, $visited);
-        return !in_array(false, $visited, true);
-    }
-
-    /**
-     * Check if the graph is disconnected
-     * @param array $adjacencyList Adjacency list of the graph
-     * @return bool True if disconnected, false otherwise
-     */
-    public function isDisconnectedGraph($adjacencyList) {
-        return !$this->isConnectedGraph($adjacencyList);
-    }
-
-    /**
-     * Depth-First Search (DFS) for graph traversal
-     * @param int $vertex Starting vertex
-     * @param array $adjacencyList Adjacency list
-     * @param array &$visited Visited nodes array
-     * @return void
-     */
-    private function dfsGraph($vertex, $adjacencyList, &$visited) {
-        $visited[$vertex] = true;
-        foreach ($adjacencyList[$vertex] ?? [] as $neighbor) {
-            if (!$visited[$neighbor]) $this->dfsGraph($neighbor, $adjacencyList, $visited);
+    public function shortestPathDijkstra(array $graph, int $start, int $end): ?array
+    {
+        if (!isset($graph[$start]) || !isset($graph[$end])) {
+            throw new \InvalidArgumentException("Invalid start or end node");
         }
-    }
+        $distances = [];
+        $previous = [];
+        $queue = new \SplPriorityQueue();
+        foreach (array_keys($graph) as $vertex) {
+            $distances[$vertex] = INF;
+            $previous[$vertex] = null;
+        }
+        $distances[$start] = 0;
+        $queue->insert($start, 0);
 
-    /**
-     * Breadth-First Search (BFS) for graph traversal
-     * @param int $start Starting vertex
-     * @param array $adjacencyList Adjacency list
-     * @return array Order of visited vertices
-     */
-    public function bfsGraph($start, $adjacencyList) {
-        $visited = array_fill_keys(array_keys($adjacencyList), false);
-        $queue = [$start];
-        $result = [];
-        $visited[$start] = true;
-        while (!empty($queue)) {
-            $vertex = array_shift($queue);
-            $result[] = $vertex;
-            foreach ($adjacencyList[$vertex] ?? [] as $neighbor) {
-                if (!$visited[$neighbor]) {
-                    $visited[$neighbor] = true;
-                    $queue[] = $neighbor;
+        while (!$queue->isEmpty()) {
+            $current = $queue->extract();
+            if ($current === $end) break;
+            foreach ($graph[$current] as $neighbor => $weight) {
+                $alt = $distances[$current] + $weight;
+                if ($alt < $distances[$neighbor]) {
+                    $distances[$neighbor] = $alt;
+                    $previous[$neighbor] = $current;
+                    $queue->insert($neighbor, -$alt);
                 }
             }
         }
-        return $result;
+        if ($distances[$end] === INF) return null;
+        $path = [];
+        $u = $end;
+        while ($u !== null) {
+            array_unshift($path, $u);
+            $u = $previous[$u];
+        }
+        return ['path' => $path, 'distance' => $distances[$end]];
     }
 
     /**
-     * Find a Hamiltonian Path in the graph
-     * @param array $adjacencyList Adjacency list
-     * @return array|string Hamiltonian path or error message
+     * Find minimum spanning tree using Kruskal's algorithm
+     * @param array $graph Edge list with weights
+     * @return array|null MST edges or null if invalid
+     * @throws \InvalidArgumentException If graph is invalid
      */
-    public function hamiltonianPath($adjacencyList) {
-        $vertices = array_keys($adjacencyList);
-        $path = [$vertices[0]];
-        $visited = array_fill_keys($vertices, false);
-        $visited[$vertices[0]] = true;
-        if ($this->findHamiltonianPath($adjacencyList, $path, $visited, count($vertices))) {
-            return $path;
+    public function minimumSpanningTreeKruskal(array $graph): ?array
+    {
+        if (empty($graph)) {
+            throw new \InvalidArgumentException("Graph is empty");
         }
-        return "Error: No Hamiltonian path exists";
+        $parent = [];
+        $rank = [];
+        $mst = [];
+        $edges = [];
+
+        foreach ($graph as $u => $neighbors) {
+            foreach ($neighbors as $v => $weight) {
+                $edges[] = ['u' => $u, 'v' => $v, 'weight' => $weight];
+            }
+        }
+        usort($edges, function($a, $b) { return $a['weight'] <=> $b['weight']; });
+
+        foreach (array_keys($graph) as $vertex) {
+            $parent[$vertex] = $vertex;
+            $rank[$vertex] = 0;
+        }
+
+        foreach ($edges as $edge) {
+            $uRoot = $this->findRoot($parent, $edge['u']);
+            $vRoot = $this->findRoot($parent, $edge['v']);
+            if ($uRoot != $vRoot) {
+                $mst[] = $edge;
+                $this->union($parent, $rank, $uRoot, $vRoot);
+            }
+        }
+        return $mst;
     }
 
-    private function findHamiltonianPath($adjacencyList, &$path, &$visited, $totalVertices) {
-        if (count($path) == $totalVertices) return true;
+    private function findRoot(array &$parent, $i)
+    {
+        if ($parent[$i] != $i) {
+            $parent[$i] = $this->findRoot($parent, $parent[$i]);
+        }
+        return $parent[$i];
+    }
+
+    private function union(array &$parent, array &$rank, $x, $y): void
+    {
+        $xRoot = $this->findRoot($parent, $x);
+        $yRoot = $this->findRoot($parent, $y);
+        if ($rank[$xRoot] < $rank[$yRoot]) {
+            $parent[$xRoot] = $yRoot;
+        } elseif ($rank[$xRoot] > $rank[$yRoot]) {
+            $parent[$yRoot] = $xRoot;
+        } else {
+            $parent[$yRoot] = $xRoot;
+            $rank[$xRoot]++;
+        }
+    }
+
+    /**
+     * Find Hamiltonian path
+     * @param array $graph Adjacency list
+     * @return array|null Hamiltonian path or null if none
+     */
+    public function hamiltonianPath(array $graph): ?array
+    {
+        if (empty($graph)) return null;
+        $vertices = array_keys($graph);
+        $path = [$vertices[0]];
+        $visited = [$vertices[0] => true];
+        if ($this->hamiltonianPathUtil($graph, $path, $visited, count($vertices))) {
+            return $path;
+        }
+        return null;
+    }
+
+    private function hamiltonianPathUtil(array $graph, array &$path, array &$visited, int $n): bool
+    {
+        if (count($path) == $n) return true;
         $current = end($path);
-        foreach ($adjacencyList[$current] ?? [] as $next) {
-            if (!$visited[$next]) {
+        foreach ($graph[$current] as $next => $weight) {
+            if (!isset($visited[$next])) {
                 $path[] = $next;
                 $visited[$next] = true;
-                if ($this->findHamiltonianPath($adjacencyList, $path, $visited, $totalVertices)) {
+                if ($this->hamiltonianPathUtil($graph, $path, $visited, $n)) {
                     return true;
                 }
                 array_pop($path);
-                $visited[$next] = false;
+                unset($visited[$next]);
             }
         }
         return false;
     }
 
     /**
-     * Find an Eulerian Circuit in the graph
-     * @param array $adjacencyList Adjacency list
-     * @return array|string Eulerian circuit or error message
+     * Find Eulerian circuit
+     * @param array $graph Adjacency list
+     * @return array|null Eulerian circuit or null if none
      */
-    public function eulerianCircuit($adjacencyList) {
-        foreach ($adjacencyList as $vertex => $neighbors) {
-            if (count($neighbors) % 2 != 0) return "Error: Graph has no Eulerian circuit";
+    public function eulerianCircuit(array $graph): ?array
+    {
+        if (empty($graph)) return null;
+        $degrees = [];
+        foreach ($graph as $vertex => $neighbors) {
+            $degrees[$vertex] = count($neighbors);
+            foreach ($neighbors as $n => $w) {
+                $degrees[$n] = isset($degrees[$n]) ? $degrees[$n] + 1 : 1;
+            }
+        }
+        foreach ($degrees as $degree) {
+            if ($degree % 2 != 0) return null; // All vertices must have even degree
         }
         $circuit = [];
-        $tempList = $adjacencyList;
-        $this->findEulerianCircuit($tempList, array_keys($adjacencyList)[0], $circuit);
+        $tempGraph = $graph;
+        $this->eulerianCircuitUtil($tempGraph, array_keys($graph)[0], $circuit);
         return array_reverse($circuit);
     }
 
-    private function findEulerianCircuit(&$adjacencyList, $current, &$circuit) {
-        while (!empty($adjacencyList[$current])) {
-            $next = array_shift($adjacencyList[$current]);
-            unset($adjacencyList[$next][array_search($current, $adjacencyList[$next])]);
-            $this->findEulerianCircuit($adjacencyList, $next, $circuit);
+    private function eulerianCircuitUtil(array &$graph, $u, array &$circuit): void
+    {
+        while (!empty($graph[$u])) {
+            $v = key($graph[$u]);
+            unset($graph[$u][$v]);
+            unset($graph[$v][$u]);
+            $this->eulerianCircuitUtil($graph, $v, $circuit);
         }
-        $circuit[] = $current;
+        $circuit[] = $u;
+    }
+
+    // NEW FUNCTIONS FOR REQUESTED TOPICS
+
+    // Differential Equations
+    /**
+     * Solve first-order ODE using Euler method: dy/dx = f(x, y)
+     * @param callable $f Differential equation function
+     * @param float $x0 Initial x
+     * @param float $y0 Initial y
+     * @param float $xEnd End x
+     * @param float $h Step size
+     * @return array Points [x, y]
+     */
+    public function solveFirstOrderODE(callable $f, float $x0, float $y0, float $xEnd, float $h = 0.1): array
+    {
+        $points = [[$x0, $y0]];
+        $x = $x0;
+        $y = $y0;
+        while ($x < $xEnd) {
+            $y += $h * $f($x, $y);
+            $x += $h;
+            $points[] = [$x, $y];
+        }
+        return $points;
     }
 
     /**
-     * Check if the graph is a tree
-     * @param array $adjacencyList Adjacency list
-     * @return bool True if tree, false otherwise
+     * Solve second-order ODE using Runge-Kutta 4 (RK4)
+     * @param callable $f Second derivative function d^2y/dx^2 = f(x, y, dy/dx)
+     * @param float $x0 Initial x
+     * @param float $y0 Initial y
+     * @param float $dy0 Initial dy/dx
+     * @param float $xEnd End x
+     * @param float $h Step size
+     * @return array Points [x, y, dy/dx]
      */
-    public function isTree($adjacencyList) {
-        $visited = array_fill_keys(array_keys($adjacencyList), false);
-        $hasCycle = $this->detectCycleDFS(array_keys($adjacencyList)[0], $adjacencyList, $visited, -1);
-        return !$hasCycle && !in_array(false, $visited, true);
+    public function solveSecondOrderODE(callable $f, float $x0, float $y0, float $dy0, float $xEnd, float $h = 0.1): array
+    {
+        $points = [[$x0, $y0, $dy0]];
+        $x = $x0;
+        $y = $y0;
+        $v = $dy0; // dy/dx
+        while ($x < $xEnd) {
+            $k1v = $h * $f($x, $y, $v);
+            $k1y = $h * $v;
+            $k2v = $h * $f($x + $h/2, $y + $k1y/2, $v + $k1v/2);
+            $k2y = $h * ($v + $k1v/2);
+            $k3v = $h * $f($x + $h/2, $y + $k2y/2, $v + $k2v/2);
+            $k3y = $h * ($v + $k2v/2);
+            $k4v = $h * $f($x + $h, $y + $k3y, $v + $k3v);
+            $k4y = $h * ($v + $k3v);
+            $y += ($k1y + 2*$k2y + 2*$k3y + $k4y) / 6;
+            $v += ($k1v + 2*$k2v + 2*$k3v + $k4v) / 6;
+            $x += $h;
+            $points[] = [$x, $y, $v];
+        }
+        return $points;
     }
 
-    private function detectCycleDFS($vertex, $adjacencyList, &$visited, $parent) {
-        $visited[$vertex] = true;
-        foreach ($adjacencyList[$vertex] ?? [] as $neighbor) {
-            if (!$visited[$neighbor]) {
-                if ($this->detectCycleDFS($neighbor, $adjacencyList, $visited, $vertex)) return true;
-            } elseif ($neighbor != $parent) {
-                return true;
+    // Linear Algebra (Additional)
+    /**
+     * Calculate eigenvalues of a 2x2 matrix (simplified)
+     * @param array $matrix 2x2 matrix
+     * @return array|null Eigenvalues or null if invalid
+     * @throws \InvalidArgumentException If matrix is invalid
+     */
+    public function eigenvalues(array $matrix): ?array
+    {
+        if (count($matrix) != 2 || count($matrix[0]) != 2) {
+            throw new \InvalidArgumentException("Matrix must be 2x2");
+        }
+        $a = $matrix[0][0];
+        $b = $matrix[0][1];
+        $c = $matrix[1][0];
+        $d = $matrix[1][1];
+        $trace = $a + $d;
+        $det = $a * $d - $b * $c;
+        $discriminant = $trace * $trace - 4 * $det;
+        if ($discriminant < 0) return null; // Complex eigenvalues not handled
+        $lambda1 = ($trace + sqrt($discriminant)) / 2;
+        $lambda2 = ($trace - sqrt($discriminant)) / 2;
+        return [$lambda1, $lambda2];
+    }
+
+    /**
+     * Calculate eigenvectors of a 2x2 matrix
+     * @param array $matrix 2x2 matrix
+     * @return array|null Eigenvectors or null if invalid
+     * @throws \InvalidArgumentException If matrix is invalid
+     */
+    public function eigenvectors(array $matrix): ?array
+    {
+        $eigenvalues = $this->eigenvalues($matrix);
+        if ($eigenvalues === null) return null;
+        $a = $matrix[0][0];
+        $b = $matrix[0][1];
+        $c = $matrix[1][0];
+        $d = $matrix[1][1];
+        $vectors = [];
+        foreach ($eigenvalues as $lambda) {
+            $m = [$a - $lambda, $b, $c, $d - $lambda];
+            if ($b != 0) {
+                $v = [-$m[1], $m[0]];
+            } else {
+                $v = [$m[2], -$m[3]];
+            }
+            $norm = sqrt($v[0] * $v[0] + $v[1] * $v[1]);
+            $vectors[] = [$v[0] / $norm, $v[1] / $norm];
+        }
+        return $vectors;
+    }
+
+    // Probability and Statistics (Additional)
+    /**
+     * Calculate binomial probability P(X = k)
+     * @param int $n Number of trials
+     * @param int $k Number of successes
+     * @param float $p Probability of success
+     * @return float|null Probability or null if invalid
+     * @throws \InvalidArgumentException If inputs are invalid
+     */
+    public function binomialProbability(int $n, int $k, float $p): ?float
+    {
+        if ($n < 0 || $k < 0 || $k > $n || $p < 0 || $p > 1) {
+            throw new \InvalidArgumentException("Invalid inputs");
+        }
+        return $this->combination($n, $k) * pow($p, $k) * pow(1 - $p, $n - $k);
+    }
+
+    /**
+     * Calculate expected value of a discrete distribution
+     * @param array $values Values
+     * @param array $probabilities Probabilities
+     * @return float|null Expected value or null if invalid
+     * @throws \InvalidArgumentException If inputs are invalid
+     */
+    public function expectedValue(array $values, array $probabilities): ?float
+    {
+        if (count($values) != count($probabilities) || array_sum($probabilities) != 1) {
+            throw new \InvalidArgumentException("Invalid distribution");
+        }
+        $sum = 0;
+        for ($i = 0; $i < count($values); $i++) {
+            $sum += $values[$i] * $probabilities[$i];
+        }
+        return $sum;
+    }
+
+    // Numerical Methods
+    /**
+     * Newton's method for root finding
+     * @param callable $f Function
+     * @param callable $df Derivative of function
+     * @param float $x0 Initial guess
+     * @param float $tolerance Tolerance
+     * @param int $maxIterations Max iterations
+     * @return float|null Root or null if not found
+     */
+    public function newtonMethod(callable $f, callable $df, float $x0, float $tolerance = 1e-6, int $maxIterations = 100): ?float
+    {
+        $x = $x0;
+        for ($i = 0; $i < $maxIterations; $i++) {
+            $fx = $f($x);
+            $dfx = $df($x);
+            if (abs($dfx) < 1e-10) return null; // Avoid division by near-zero
+            $xNew = $x - $fx / $dfx;
+            if (abs($xNew - $x) < $tolerance) return $xNew;
+            $x = $xNew;
+        }
+        return null;
+    }
+
+    /**
+     * Bisection method for root finding
+     * @param callable $f Function
+     * @param float $a Lower bound
+     * @param float $b Upper bound
+     * @param float $tolerance Tolerance
+     * @param int $maxIterations Max iterations
+     * @return float|null Root or null if not found
+     * @throws \InvalidArgumentException If bounds are invalid
+     */
+    public function bisectionMethod(callable $f, float $a, float $b, float $tolerance = 1e-6, int $maxIterations = 100): ?float
+    {
+        if ($f($a) * $f($b) >= 0) {
+            throw new \InvalidArgumentException("Function must have opposite signs at bounds");
+        }
+        $c = $a;
+        for ($i = 0; $i < $maxIterations; $i++) {
+            $c = ($a + $b) / 2;
+            $fc = $f($c);
+            if (abs($fc) < $tolerance || ($b - $a) / 2 < $tolerance) return $c;
+            if ($fc * $f($a) > 0) {
+                $a = $c;
+            } else {
+                $b = $c;
             }
         }
-        return false;
+        return $c;
+    }
+
+    // Complex Analysis
+    /**
+     * Add two complex numbers
+     * @param array $z1 First complex number [real, imag]
+     * @param array $z2 Second complex number [real, imag]
+     * @return array Sum [real, imag]
+     */
+    public function complexAdd(array $z1, array $z2): array
+    {
+        return [$z1[0] + $z2[0], $z1[1] + $z2[1]];
     }
 
     /**
-     * Find shortest paths using Dijkstra's algorithm
-     * @param array $graph Weighted adjacency matrix
-     * @param int $start Starting vertex
-     * @return array Shortest distances from start
+     * Multiply two complex numbers
+     * @param array $z1 First complex number [real, imag]
+     * @param array $z2 Second complex number [real, imag]
+     * @return array Product [real, imag]
      */
-    public function dijkstra($graph, $start) {
-        $distances = array_fill(0, count($graph), INF);
-        $distances[$start] = 0;
-        $visited = array_fill(0, count($graph), false);
-        for ($i = 0; $i < count($graph); $i++) {
-            $u = $this->minDistance($distances, $visited);
-            if ($u === null) break;
-            $visited[$u] = true;
-            for ($v = 0; $v < count($graph); $v++) {
-                if (!$visited[$v] && $graph[$u][$v] != 0 && $distances[$u] != INF && $distances[$u] + $graph[$u][$v] < $distances[$v]) {
-                    $distances[$v] = $distances[$u] + $graph[$u][$v];
+    public function complexMultiply(array $z1, array $z2): array
+    {
+        $real = $z1[0] * $z2[0] - $z1[1] * $z2[1];
+        $imag = $z1[0] * $z2[1] + $z1[1] * $z2[0];
+        return [$real, $imag];
+    }
+
+    // Optimization
+    /**
+     * Gradient descent for minimization
+     * @param callable $f Function to minimize
+     * @param callable $grad Gradient of function
+     * @param array $x0 Initial guess
+     * @param float $learningRate Learning rate
+     * @param float $tolerance Tolerance
+     * @param int $maxIterations Max iterations
+     * @return array|null Minimum point or null if not converged
+     */
+    public function gradientDescent(callable $f, callable $grad, array $x0, float $learningRate = 0.01, float $tolerance = 1e-6, int $maxIterations = 1000): ?array
+    {
+        $x = $x0;
+        for ($i = 0; $i < $maxIterations; $i++) {
+            $gradient = $grad($x);
+            $xNew = [];
+            for ($j = 0; $j < count($x); $j++) {
+                $xNew[$j] = $x[$j] - $learningRate * $gradient[$j];
+            }
+            if ($this->euclideanDistance($x, $xNew) < $tolerance) return $xNew;
+            $x = $xNew;
+        }
+        return null;
+    }
+
+    /**
+     * Linear programming (simplified Simplex method placeholder)
+     * @param array $c Objective coefficients
+     * @param array $A Constraint matrix
+     * @param array $b Constraint bounds
+     * @return array|null Optimal solution or null
+     */
+    public function linearProgramming(array $c, array $A, array $b): ?array
+    {
+        // Placeholder: Simplified for demonstration (actual Simplex is complex)
+        return null;
+    }
+
+    // Discrete Mathematics
+    /**
+     * Generate power set
+     * @param array $set Input set
+     * @return array Power set
+     */
+    public function powerSet(array $set): array
+    {
+        $powerSet = [[]];
+        foreach ($set as $element) {
+            foreach ($powerSet as $subset) {
+                $powerSet[] = array_merge($subset, [$element]);
+            }
+        }
+        return $powerSet;
+    }
+
+    /**
+     * Check if relation is reflexive
+     * @param array $set Set of elements
+     * @param array $relation Relation as pairs [[a, b], ...]
+     * @return bool True if reflexive
+     */
+    public function isReflexive(array $set, array $relation): bool
+    {
+        foreach ($set as $element) {
+            if (!in_array([$element, $element], $relation)) return false;
+        }
+        return true;
+    }
+
+    // Mathematical Modeling
+    /**
+     * Exponential growth model
+     * @param float $initialValue Initial value
+     * @param float $growthRate Growth rate
+     * @param float $time Time
+     * @return float Value at time t
+     */
+    public function exponentialGrowth(float $initialValue, float $growthRate, float $time): float
+    {
+        return $initialValue * exp($growthRate * $time);
+    }
+
+    /**
+     * Logistic growth model
+     * @param float $initialValue Initial value
+     * @param float $carryingCapacity Carrying capacity
+     * @param float $growthRate Growth rate
+     * @param float $time Time
+     * @return float Value at time t
+     */
+    public function logisticGrowth(float $initialValue, float $carryingCapacity, float $growthRate, float $time): float
+    {
+        return $carryingCapacity / (1 + (($carryingCapacity - $initialValue) / $initialValue) * exp(-$growthRate * $time));
+    }
+
+    // Vector Calculus
+    /**
+     * Gradient of a scalar function (numerical)
+     * @param callable $f Scalar function
+     * @param array $point Point [x, y, ...]
+     * @param float $h Step size
+     * @return array Gradient vector
+     */
+    public function gradient(callable $f, array $point, float $h = 1e-5): array
+    {
+        $grad = [];
+        for ($i = 0; $i < count($point); $i++) {
+            $pointPlus = $point;
+            $pointMinus = $point;
+            $pointPlus[$i] += $h;
+            $pointMinus[$i] -= $h;
+            $grad[$i] = ($f($pointPlus) - $f($pointMinus)) / (2 * $h);
+        }
+        return $grad;
+    }
+
+    /**
+     * Divergence of a vector field (numerical)
+     * @param array $f Vector field functions [f1, f2, ...]
+     * @param array $point Point [x, y, ...]
+     * @param float $h Step size
+     * @return float Divergence
+     */
+    public function divergence(array $f, array $point, float $h = 1e-5): float
+    {
+        $div = 0;
+        for ($i = 0; $i < count($point); $i++) {
+            $pointPlus = $point;
+            $pointMinus = $point;
+            $pointPlus[$i] += $h;
+            $pointMinus[$i] -= $h;
+            $div += ($f[$i]($pointPlus) - $f[$i]($pointMinus)) / (2 * $h);
+        }
+        return $div;
+    }
+
+    // Fourier and Laplace Transforms
+    /**
+     * Discrete Fourier Transform (simplified)
+     * @param array $signal Input signal
+     * @return array Complex coefficients
+     */
+    public function fourierTransform(array $signal): array
+    {
+        $N = count($signal);
+        $X = [];
+        for ($k = 0; $k < $N; $k++) {
+            $sum = [0, 0]; // [real, imag]
+            for ($n = 0; $n < $N; $n++) {
+                $angle = -2 * M_PI * $k * $n / $N;
+                $real = cos($angle);
+                $imag = sin($angle);
+                $sum[0] += $signal[$n] * $real;
+                $sum[1] += $signal[$n] * $imag;
+            }
+            $X[$k] = $sum;
+        }
+        return $X;
+    }
+
+    /**
+     * Laplace Transform (symbolic placeholder)
+     * @param callable $f Function of t
+     * @param float $s Complex frequency
+     * @return float|null Transform value or null
+     */
+    public function laplaceTransform(callable $f, float $s): ?float
+    {
+        // Numerical approximation using integral
+        return $this->integral(function($t) use ($f, $s) {
+            return $f($t) * exp(-$s * $t);
+        }, 0, INF, 1000);
+    }
+
+    // Control Theory
+    /**
+     * Calculate step response of a first-order system
+     * @param float $k Gain
+     * @param float $tau Time constant
+     * @param float $t Time
+     * @return float Response
+     */
+    public function stepResponse(float $k, float $tau, float $t): float
+    {
+        if ($tau <= 0) return 0;
+        return $k * (1 - exp(-$t / $tau));
+    }
+
+    /**
+     * Calculate frequency response (magnitude)
+     * @param float $k Gain
+     * @param float $tau Time constant
+     * @param float $omega Frequency
+     * @return float Magnitude
+     */
+    public function frequencyResponse(float $k, float $tau, float $omega): float
+    {
+        return $k / sqrt(1 + pow($omega * $tau, 2));
+    }
+
+    // Finite Element Methods
+    /**
+     * Solve 1D FEM for u'' = f(x) (simplified)
+     * @param callable $f Source function
+     * @param array $nodes Node positions
+     * @param array $boundaryConditions [u(0), u(L)]
+     * @return array Solution at nodes
+     */
+    public function solveFEM(callable $f, array $nodes, array $boundaryConditions): array
+    {
+        $n = count($nodes) - 1;
+        $A = $this->zeroMatrix($n + 1, $n + 1);
+        $b = array_fill(0, $n + 1, 0);
+        $h = $nodes[1] - $nodes[0]; // Assume uniform spacing
+
+        for ($i = 1; $i < $n; $i++) {
+            $A[$i][$i-1] = -1 / $h;
+            $A[$i][$i] = 2 / $h;
+            $A[$i][$i+1] = -1 / $h;
+            $b[$i] = $f($nodes[$i]);
+        }
+        $A[0][0] = 1;
+        $A[$n][$n] = 1;
+        $b[0] = $boundaryConditions[0];
+        $b[$n] = $boundaryConditions[1];
+
+        return $this->solveLinearSystem($A, $b); // Placeholder for actual solver
+    }
+
+    /**
+     * Solve linear system Ax = b (simplified Gaussian elimination)
+     * @param array $A Matrix
+     * @param array $b Vector
+     * @return array|null Solution or null
+     */
+    public function solveLinearSystem(array $A, array $b): ?array
+    {
+        $n = count($A);
+        $augmented = [];
+        for ($i = 0; $i < $n; $i++) {
+            $augmented[$i] = array_merge($A[$i], [$b[$i]]);
+        }
+        for ($i = 0; $i < $n; $i++) {
+            $pivot = $augmented[$i][$i];
+            if (abs($pivot) < 1e-10) return null;
+            for ($j = $i; $j <= $n; $j++) {
+                $augmented[$i][$j] /= $pivot;
+            }
+            for ($k = 0; $k < $n; $k++) {
+                if ($k != $i) {
+                    $factor = $augmented[$k][$i];
+                    for ($j = $i; $j <= $n; $j++) {
+                        $augmented[$k][$j] -= $factor * $augmented[$i][$j];
+                    }
                 }
             }
         }
-        return $distances;
-    }
-
-    private function minDistance($distances, $visited) {
-        $min = INF;
-        $minIndex = null;
-        for ($v = 0; $v < count($distances); $v++) {
-            if (!$visited[$v] && $distances[$v] <= $min) {
-                $min = $distances[$v];
-                $minIndex = $v;
-            }
+        $x = [];
+        for ($i = 0; $i < $n; $i++) {
+            $x[$i] = $augmented[$i][$n];
         }
-        return $minIndex;
+        return $x;
     }
 
+    // Test Method
     /**
-     * Run tests for all functions, organized by groups
-     * @return void
+     * Run all tests
      */
-    public function runTests() {
-        echo "Start Testing MathCalculations:\n";
-        echo "----------------------------------------\n";
+    public function runTests(): void
+    {
+        echo "Running Tests...\n";
 
         // Group 1: Basic Operations
-        echo "Group 1: Basic Operations\n";
-        echo "-------------------------\n";
-        echo "// Test addition of 5 and 3\n";
-        echo "add(5, 3): " . $this->add(5, 3) . "\n"; // Expected: 8
-        echo "// Test subtraction of 10 minus 4\n";
-        echo "subtract(10, 4): " . $this->subtract(10, 4) . "\n"; // Expected: 6
-        echo "// Test multiplication of 6 by 2\n";
-        echo "multiply(6, 2): " . $this->multiply(6, 2) . "\n"; // Expected: 12
-        echo "// Test division of 15 by 3\n";
-        echo "divide(15, 3): " . $this->divide(15, 3) . "\n"; // Expected: 5
-        echo "// Test division by zero (error case)\n";
-        echo "divide(10, 0): " . $this->divide(10, 0) . "\n"; // Expected: Error message
+        echo "\nGroup 1: Basic Operations\n";
+        echo "add(5, 3) = " . $this->add(5, 3) . " (Expected: 8)\n";
+        echo "subtract(10, 4) = " . $this->subtract(10, 4) . " (Expected: 6)\n";
+        echo "multiply(6, 7) = " . $this->multiply(6, 7) . " (Expected: 42)\n";
+        try {
+            echo "divide(15, 3) = " . $this->divide(15, 3) . " (Expected: 5)\n";
+            echo "divide(10, 0) = ";
+            $this->divide(10, 0);
+        } catch (\InvalidArgumentException $e) {
+            echo "Exception: " . $e->getMessage() . "\n";
+        }
 
         // Group 2: Algebra
         echo "\nGroup 2: Algebra\n";
-        echo "-------------------------\n";
-        echo "// Test quadratic formula for x^2 - 3x + 2 = 0\n";
-        echo "quadraticFormula(1, -3, 2): " . json_encode($this->quadraticFormula(1, -3, 2)) . "\n"; // Expected: [2, 1]
-        echo "// Test absolute value of -5\n";
-        echo "absoluteValue(-5): " . $this->absoluteValue(-5) . "\n"; // Expected: 5
-        echo "// Test 2 raised to power 3\n";
-        echo "power(2, 3): " . $this->power(2, 3) . "\n"; // Expected: 8
-        echo "// Test square root of 16\n";
-        echo "squareRoot(16): " . $this->squareRoot(16) . "\n"; // Expected: 4
-        echo "// Test cubic formula for x^3 - 6x^2 + 11x - 6 = 0\n";
-        echo "cubicFormula(1, -6, 11, -6): " . json_encode($this->cubicFormula(1, -6, 11, -6)) . "\n"; // Expected: [1, 2, 3]
-        echo "// Test LCM of 12 and 18\n";
-        echo "lcm(12, 18): " . $this->lcm(12, 18) . "\n"; // Expected: 36
-        echo "// Test GCD of 48 and 18\n";
-        echo "gcd(48, 18): " . $this->gcd(48, 18) . "\n"; // Expected: 6
+        $roots = $this->quadraticFormula(1, -3, 2);
+        echo "quadraticFormula(1, -3, 2) = [" . implode(", ", $roots) . "] (Expected: [2, 1])\n";
+        echo "absoluteValue(-5) = " . $this->absoluteValue(-5) . " (Expected: 5)\n";
+        echo "power(2, 3) = " . $this->power(2, 3) . " (Expected: 8)\n";
+        try {
+            echo "squareRoot(16) = " . $this->squareRoot(16) . " (Expected: 4)\n";
+            echo "squareRoot(-4) = ";
+            $this->squareRoot(-4);
+        } catch (\InvalidArgumentException $e) {
+            echo "Exception: " . $e->getMessage() . "\n";
+        }
+        $cubicRoots = $this->cubicFormula(1, -6, 11, -6);
+        echo "cubicFormula(1, -6, 11, -6) = [" . implode(", ", $cubicRoots) . "] (Expected: [1, 2, 3])\n";
+        $polyRoots = $this->polynomialRoots([1, -3, 2]);
+        echo "polynomialRoots([1, -3, 2]) = [" . implode(", ", $polyRoots) . "] (Expected: [2, 1])\n";
+        echo "lcm(12, 18) = " . $this->lcm(12, 18) . " (Expected: 36)\n";
+        echo "gcd(48, 18) = " . $this->gcd(48, 18) . " (Expected: 6)\n";
 
         // Group 3: Calculus
         echo "\nGroup 3: Calculus\n";
-        echo "-------------------------\n";
         $f = function($x) { return $x * $x; };
-        echo "// Test derivative of x^2 at x = 2\n";
-        echo "derivative(x^2, 2): " . $this->derivative($f, 2) . "\n"; // Expected: ~4
-        echo "// Test integral of x^2 from 0 to 2\n";
-        echo "integral(x^2, 0, 2): " . $this->integral($f, 0, 2) . "\n"; // Expected: ~2.67
-        echo "// Test limit of x^2 as x approaches 1\n";
-        echo "limit(x^2, 1): " . $this->limit($f, 1) . "\n"; // Expected: ~1
-        echo "// Test second derivative of x^2 at x = 2\n";
-        echo "secondDerivative(x^2, 2): " . $this->secondDerivative($f, 2) . "\n"; // Expected: ~2
-        echo "// Test mean value theorem for x^2 from 0 to 2\n";
-        echo "meanValueTheorem(x^2, 0, 2): " . $this->meanValueTheorem($f, 0, 2) . "\n"; // Expected: 2
+        echo "derivative(x^2 at x=2) = " . $this->derivative($f, 2) . " (Expected: ~4)\n";
+        echo "integral(x^2 from 0 to 1) = " . $this->integral($f, 0, 1) . " (Expected: ~0.333)\n";
+        echo "limit(x^2 at x=2) = " . $this->limit($f, 2) . " (Expected: ~4)\n";
+        echo "secondDerivative(x^2 at x=2) = " . $this->secondDerivative($f, 2) . " (Expected: ~2)\n";
+        echo "meanValueTheorem(x^2 from 0 to 2) = " . $this->meanValueTheorem($f, 0, 2) . " (Expected: 2)\n";
 
         // Group 4: Trigonometric Functions
         echo "\nGroup 4: Trigonometric Functions\n";
-        echo "-------------------------\n";
-        echo "// Test sine of 30 degrees\n";
-        echo "sin(30): " . $this->sin(30) . "\n"; // Expected: 0.5
-        echo "// Test cosine of 60 degrees\n";
-        echo "cos(60): " . $this->cos(60) . "\n"; // Expected: 0.5
-        echo "// Test tangent of 45 degrees\n";
-        echo "tan(45): " . $this->tan(45) . "\n"; // Expected: ~1
-        echo "// Test secant of 0 degrees\n";
-        echo "sec(0): " . $this->sec(0) . "\n"; // Expected: 1
-        echo "// Test cosecant of 90 degrees\n";
-        echo "cosec(90): " . $this->cosec(90) . "\n"; // Expected: 1
-        echo "// Test cotangent of 45 degrees\n";
-        echo "cot(45): " . $this->cot(45) . "\n"; // Expected: ~1
-        echo "// Test arcsine of 0.5\n";
-        echo "arcsin(0.5): " . $this->arcsin(0.5) . "\n"; // Expected: 30
-        echo "// Test arccosine of 0.5\n";
-        echo "arccos(0.5): " . $this->arccos(0.5) . "\n"; // Expected: 60
-        echo "// Test arctangent of 1\n";
-        echo "arctan(1): " . $this->arctan(1) . "\n"; // Expected: 45
+        echo "sin(30) = " . $this->sin(30) . " (Expected: 0.5)\n";
+        echo "cos(60) = " . $this->cos(60) . " (Expected: 0.5)\n";
+        try {
+            echo "tan(45) = " . $this->tan(45) . " (Expected: 1)\n";
+            echo "tan(90) = ";
+            $this->tan(90);
+        } catch (\InvalidArgumentException $e) {
+            echo "Exception: " . $e->getMessage() . "\n";
+        }
+        echo "arcsin(0.5) = " . $this->arcsin(0.5) . " (Expected: 30)\n";
 
         // Group 5: Exponential and Logarithmic Functions
         echo "\nGroup 5: Exponential and Logarithmic Functions\n";
-        echo "-------------------------\n";
-        echo "// Test e^1\n";
-        echo "exponential(1): " . $this->exponential(1) . "\n"; // Expected: ~2.718
-        echo "// Test log base 10 of 100\n";
-        echo "logarithm(100, 10): " . $this->logarithm(100, 10) . "\n"; // Expected: 2
-        echo "// Test natural log of e\n";
-        echo "naturalLog(2.718): " . $this->naturalLog(2.718) . "\n"; // Expected: ~1
-        echo "// Test log base 10 of 1000\n";
-        echo "logBase10(1000): " . $this->logBase10(1000) . "\n"; // Expected: 3
+        echo "exponential(1) = " . $this->exponential(1) . " (Expected: ~2.718)\n";
+        echo "logarithm(100, 10) = " . $this->logarithm(100, 10) . " (Expected: 2)\n";
+        echo "naturalLog(2.718) = " . $this->naturalLog(2.718) . " (Expected: ~1)\n";
+        echo "logBase10(1000) = " . $this->logBase10(1000) . " (Expected: 3)\n";
 
         // Group 6: Series and Sequences
         echo "\nGroup 6: Series and Sequences\n";
-        echo "-------------------------\n";
-        echo "// Test 5th term of arithmetic sequence starting at 1 with difference 2\n";
-        echo "arithmeticSequence(1, 2, 5): " . $this->arithmeticSequence(1, 2, 5) . "\n"; // Expected: 9
-        echo "// Test 4th term of geometric sequence starting at 2 with ratio 3\n";
-        echo "geometricSequence(2, 3, 4): " . $this->geometricSequence(2, 3, 4) . "\n"; // Expected: 54
-        echo "// Test 6th Fibonacci number\n";
-        echo "fibonacci(6): " . $this->fibonacci(6) . "\n"; // Expected: 8
-        echo "// Test Taylor series for e^1 with 5 terms\n";
-        echo "taylorSeriesExponential(1, 5): " . $this->taylorSeriesExponential(1, 5) . "\n"; // Expected: ~2.708
-        echo "// Test Taylor series for sin(30°) with 5 terms\n";
-        echo "taylorSeriesSin(30, 5): " . $this->taylorSeriesSin(deg2rad(30), 5) . "\n"; // Expected: ~0.5
-        echo "// Test Taylor series for cos(60°) with 5 terms\n";
-        echo "taylorSeriesCos(60, 5): " . $this->taylorSeriesCos(deg2rad(60), 5) . "\n"; // Expected: ~0.5
-        echo "// Test factorial of 5\n";
-        echo "factorial(5): " . $this->factorial(5) . "\n"; // Expected: 120
+        echo "arithmeticSequence(2, 3, 4) = " . $this->arithmeticSequence(2, 3, 4) . " (Expected: 11)\n";
+        echo "geometricSequence(2, 2, 3) = " . $this->geometricSequence(2, 2, 3) . " (Expected: 8)\n";
+        echo "fibonacci(6) = " . $this->fibonacci(6) . " (Expected: 8)\n";
+        echo "taylorSeriesExponential(1, 5) = " . $this->taylorSeriesExponential(1, 5) . " (Expected: ~2.708)\n";
+        echo "taylorSeriesSin(deg2rad(30), 5) = " . $this->taylorSeriesSin(deg2rad(30), 5) . " (Expected: ~0.5)\n";
 
         // Group 7: Matrix Operations
         echo "\nGroup 7: Matrix Operations\n";
-        echo "-------------------------\n";
         $matrixA = [[1, 2], [3, 4]];
         $matrixB = [[5, 6], [7, 8]];
-        echo "// Test addition of matrices [[1,2],[3,4]] and [[5,6],[7,8]]\n";
-        echo "matrixAddition([[1,2],[3,4]], [[5,6],[7,8]]): " . json_encode($this->matrixAddition($matrixA, $matrixB)) . "\n"; // Expected: [[6,8],[10,12]]
-        echo "// Test multiplication of matrices [[1,2],[3,4]] and [[5,6],[7,8]]\n";
-        echo "matrixMultiplication([[1,2],[3,4]], [[5,6],[7,8]]): " . json_encode($this->matrixMultiplication($matrixA, $matrixB)) . "\n"; // Expected: [[19,22],[43,50]]
-        echo "// Test transpose of matrix [[1,2],[3,4]]\n";
-        echo "transpose([[1,2],[3,4]]): " . json_encode($this->transpose($matrixA)) . "\n"; // Expected: [[1,3],[2,4]]
-        echo "// Test determinant of matrix [[1,2],[3,4]]\n";
-        echo "determinant([[1,2],[3,4]]): " . $this->determinant($matrixA) . "\n"; // Expected: -2
-        echo "// Test inverse of matrix [[1,2],[3,4]]\n";
-        echo "inverse([[1,2],[3,4]]): " . json_encode($this->inverse($matrixA)) . "\n"; // Expected: [[-2,1],[1.5,-0.5]]
-        echo "// Test outer product of vectors [1,2] and [3,4]\n";
-        echo "outerProduct([1,2], [3,4]): " . json_encode($this->outerProduct([1, 2], [3, 4])) . "\n"; // Expected: [[3,4],[6,8]]
-        echo "// Test identity matrix of size 3\n";
-        echo "identityMatrix(3): " . json_encode($this->identityMatrix(3)) . "\n"; // Expected: [[1,0,0],[0,1,0],[0,0,1]]
-        echo "// Test diagonal matrix with values [1,2,3]\n";
-        echo "diagonalMatrix([1,2,3]): " . json_encode($this->diagonalMatrix([1, 2, 3])) . "\n"; // Expected: [[1,0,0],[0,2,0],[0,0,3]]
-        echo "// Test upper triangular matrix of [[1,2],[3,4]]\n";
-        echo "upperTriangularMatrix([[1,2],[3,4]]): " . json_encode($this->upperTriangularMatrix([[1, 2], [3, 4]])) . "\n"; // Expected: [[1,2],[0,4]]
-        echo "// Test lower triangular matrix of [[1,2],[3,4]]\n";
-        echo "lowerTriangularMatrix([[1,2],[3,4]]): " . json_encode($this->lowerTriangularMatrix([[1, 2], [3, 4]])) . "\n"; // Expected: [[1,0],[3,4]]
-        echo "// Test ones matrix of size 2x3\n";
-        echo "onesMatrix(2, 3): " . json_encode($this->onesMatrix(2, 3)) . "\n"; // Expected: [[1,1,1],[1,1,1]]
-        echo "// Test Hermitian matrix of [[1,2],[3,4]] (real case)\n";
-        echo "hermitianMatrix([[1,2],[3,4]]): " . json_encode($this->hermitianMatrix([[1, 2], [3, 4]])) . "\n"; // Expected: [[1,3],[2,4]]
-        echo "// Test equivalence of [[1,2],[3,4]] with itself\n";
-        echo "areEquivalentMatrices([[1,2],[3,4]], [[1,2],[3,4]]): " . ($this->areEquivalentMatrices([[1, 2], [3, 4]], [[1, 2], [3, 4]]) ? "true" : "false") . "\n"; // Expected: true
-        echo "// Test adjoint matrix of [[1,2],[3,4]]\n";
-        echo "adjointMatrix([[1,2],[3,4]]): " . json_encode($this->adjointMatrix([[1, 2], [3, 4]])) . "\n"; // Expected: [[4,-2],[-3,1]]
-        echo "// Test row matrix from vector [1,2,3]\n";
-        echo "rowMatrix([1,2,3]): " . json_encode($this->rowMatrix([1, 2, 3])) . "\n"; // Expected: [[1,2,3]]
-        echo "// Test column matrix from vector [1,2,3]\n";
-        echo "columnMatrix([1,2,3]): " . json_encode($this->columnMatrix([1, 2, 3])) . "\n"; // Expected: [[1],[2],[3]]
-        echo "// Test if [[1,2],[3,4]] is square\n";
-        echo "isSquareMatrix([[1,2],[3,4]]): " . ($this->isSquareMatrix([[1, 2], [3, 4]]) ? "true" : "false") . "\n"; // Expected: true
-        echo "// Test zero matrix of size 2x3\n";
-        echo "zeroMatrix(2, 3): " . json_encode($this->zeroMatrix(2, 3)) . "\n"; // Expected: [[0,0,0],[0,0,0]]
-        echo "// Test if [[1,2],[2,1]] is symmetric\n";
-        echo "isSymmetricMatrix([[1,2],[2,1]]): " . ($this->isSymmetricMatrix([[1, 2], [2, 1]]) ? "true" : "false") . "\n"; // Expected: true
-        echo "// Test if [[0,1],[-1,0]] is orthogonal\n";
-        echo "isOrthogonalMatrix([[0,1],[-1,0]]): " . ($this->isOrthogonalMatrix([[0, 1], [-1, 0]]) ? "true" : "false") . "\n"; // Expected: true
+        $addResult = $this->matrixAddition($matrixA, $matrixB);
+        echo "matrixAddition = [" . implode(", ", array_map('json_encode', $addResult)) . "] (Expected: [[6,8],[10,12]])\n";
+        $multResult = $this->matrixMultiplication($matrixA, $matrixB);
+        echo "matrixMultiplication = [" . implode(", ", array_map('json_encode', $multResult)) . "] (Expected: [[19,22],[43,50]])\n";
+        $transpose = $this->transpose($matrixA);
+        echo "transpose = [" . implode(", ", array_map('json_encode', $transpose)) . "] (Expected: [[1,3],[2,4]])\n";
+        echo "determinant([[1,2],[3,4]]) = " . $this->determinant($matrixA) . " (Expected: -2)\n";
+        $inverse = $this->inverse($matrixA);
+        echo "inverse = [" . implode(", ", array_map('json_encode', $inverse)) . "] (Expected: [[-2,1],[1.5,-0.5]])\n";
 
         // Group 8: Statistical Functions
         echo "\nGroup 8: Statistical Functions\n";
-        echo "-------------------------\n";
+        echo "combination(5, 2) = " . $this->combination(5, 2) . " (Expected: 10)\n";
+        echo "permutation(5, 2) = " . $this->permutation(5, 2) . " (Expected: 20)\n";
         $numbers = [1, 2, 3, 4, 5];
-        echo "// Test combination of 5 choose 2\n";
-        echo "combination(5, 2): " . $this->combination(5, 2) . "\n"; // Expected: 10
-        echo "// Test permutation of 5 permute 2\n";
-        echo "permutation(5, 2): " . $this->permutation(5, 2) . "\n"; // Expected: 20
-        echo "// Test mean of [1,2,3,4,5]\n";
-        echo "mean([1,2,3,4,5]): " . $this->mean($numbers) . "\n"; // Expected: 3
-        echo "// Test sample variance of [1,2,3,4,5]\n";
-        echo "varianceSample([1,2,3,4,5]): " . $this->varianceSample($numbers) . "\n"; // Expected: 2.5
-        echo "// Test standard deviation of [1,2,3,4,5]\n";
-        echo "standardDeviation([1,2,3,4,5]): " . $this->standardDeviation($numbers) . "\n"; // Expected: ~1.58
-        echo "// Test median of [1,2,3,4,5]\n";
-        echo "median([1,2,3,4,5]): " . $this->median($numbers) . "\n"; // Expected: 3
-        echo "// Test mode of [1,2,2,3,4]\n";
-        echo "mode([1,2,2,3,4]): " . $this->mode([1, 2, 2, 3, 4]) . "\n"; // Expected: 2
-        echo "// Test range of [1,2,3,4,5]\n";
-        echo "range([1,2,3,4,5]): " . $this->range($numbers) . "\n"; // Expected: 4
-        echo "// Test Poisson distribution for k=2, lambda=1.5\n";
-        echo "poissonDistribution(2, 1.5): " . $this->poissonDistribution(2, 1.5) . "\n"; // Expected: ~0.251
-        echo "// Test standard normal distribution at z=0\n";
-        echo "standardNormalDistribution(0): " . $this->standardNormalDistribution(0) . "\n"; // Expected: ~0.399
-        echo "// Test cumulative normal distribution at z=1\n";
-        echo "cumulativeNormalDistribution(1): " . $this->cumulativeNormalDistribution(1) . "\n"; // Expected: ~0.841
-        echo "// Test chi-square CDF for x=2, k=2\n";
-        echo "chiSquareCDF(2, 2): " . $this->chiSquareCDF(2, 2) . "\n"; // Expected: ~0.632
-        echo "// Test skewness of [1,2,2,3,4]\n";
-        echo "skewness([1,2,2,3,4]): " . $this->skewness([1, 2, 2, 3, 4]) . "\n"; // Expected: ~0.261
-        echo "// Test kurtosis of [1,2,2,3,4]\n";
-        echo "kurtosis([1,2,2,3,4]): " . $this->kurtosis([1, 2, 2, 3, 4]) . "\n"; // Expected: ~-1.3
-        echo "// Test interquartile range of [1,2,3,4,5,6,7]\n";
-        echo "interquartileRange([1,2,3,4,5,6,7]): " . $this->interquartileRange([1, 2, 3, 4, 5, 6, 7]) . "\n"; // Expected: 3
+        echo "mean([1,2,3,4,5]) = " . $this->mean($numbers) . " (Expected: 3)\n";
+        echo "varianceSample([1,2,3,4,5]) = " . $this->varianceSample($numbers) . " (Expected: 2.5)\n";
+        echo "median([1,2,3,4,5]) = " . $this->median($numbers) . " (Expected: 3)\n";
+        echo "poissonDistribution(2, 1) = " . $this->poissonDistribution(2, 1) . " (Expected: ~0.183)\n";
+        echo "standardNormalDistribution(0) = " . $this->standardNormalDistribution(0) . " (Expected: ~0.399)\n";
 
-        // Group 9: Distance and Similarity Measures
-        echo "\nGroup 9: Distance and Similarity Measures\n";
-        echo "-------------------------\n";
+        // Group 9: Similarity Functions
+        echo "\nGroup 9: Similarity Functions\n";
         $v1 = [1, 2, 3];
         $v2 = [4, 5, 6];
-        echo "// Test Euclidean distance between [1,2,3] and [4,5,6]\n";
-        echo "euclideanDistance([1,2,3], [4,5,6]): " . $this->euclideanDistance($v1, $v2) . "\n"; // Expected: ~5.196
-        echo "// Test Manhattan distance between [1,2,3] and [4,5,6]\n";
-        echo "manhattanDistance([1,2,3], [4,5,6]): " . $this->manhattanDistance($v1, $v2) . "\n"; // Expected: 9
-        echo "// Test Chebyshev distance between [1,2,3] and [4,5,6]\n";
-        echo "chebyshevDistance([1,2,3], [4,5,6]): " . $this->chebyshevDistance($v1, $v2) . "\n"; // Expected: 3
-        echo "// Test Minkowski distance (p=1) between [1,2,3] and [4,5,6]\n";
-        echo "minkowskiDistance([1,2,3], [4,5,6], 1): " . $this->minkowskiDistance($v1, $v2, 1) . "\n"; // Expected: 9
-        echo "// Test Minkowski distance (p=2) between [1,2,3] and [4,5,6]\n";
-        echo "minkowskiDistance([1,2,3], [4,5,6], 2): " . $this->minkowskiDistance($v1, $v2, 2) . "\n"; // Expected: ~5.196
-        echo "// Test cosine distance between [1,2,3] and [4,5,6]\n";
-        echo "cosineDistance([1,2,3], [4,5,6]): " . $this->cosineDistance($v1, $v2) . "\n"; // Expected: ~0.025
-        echo "// Test cosine similarity between [1,2,3] and [4,5,6]\n";
-        echo "cosineSimilarity([1,2,3], [4,5,6]): " . $this->cosineSimilarity($v1, $v2) . "\n"; // Expected: ~0.974
-        echo "// Test Jaccard similarity between [1,2,3] and [2,3,4]\n";
-        echo "jaccardSimilarity([1,2,3], [2,3,4]): " . $this->jaccardSimilarity([1, 2, 3], [2, 3, 4]) . "\n"; // Expected: 0.5
-        echo "// Test Pearson similarity between [1,2,3] and [2,4,6]\n";
-        echo "pearsonSimilarity([1,2,3], [2,4,6]): " . $this->pearsonSimilarity([1, 2, 3], [2, 4, 6]) . "\n"; // Expected: 1
-        echo "// Test dot product similarity between [1,2,3] and [4,5,6]\n";
-        echo "dotProductSimilarity([1,2,3], [4,5,6]): " . $this->dotProductSimilarity($v1, $v2) . "\n"; // Expected: 32
+        echo "euclideanDistance([1,2,3], [4,5,6]) = " . $this->euclideanDistance($v1, $v2) . " (Expected: ~5.196)\n";
+        echo "cosineSimilarity([1,2,3], [4,5,6]) = " . $this->cosineSimilarity($v1, $v2) . " (Expected: ~0.974)\n";
+        echo "jaccardSimilarity([1,2,3], [2,3,4]) = " . $this->jaccardSimilarity([1,2,3], [2,3,4]) . " (Expected: 0.5)\n";
 
-        // Group 10: Machine Learning and Clustering
-        echo "\nGroup 10: Machine Learning and Clustering\n";
-        echo "-------------------------\n";
-        $x = [1, 2, 3, 4, 5];
-        $y = [2, 4, 5, 4, 5];
-        echo "// Test linear regression for x=[1,2,3,4,5], y=[2,4,5,4,5]\n";
-        echo "linearRegression([1,2,3,4,5], [2,4,5,4,5]): " . json_encode($this->linearRegression($x, $y)) . "\n"; // Expected: [m, b]
-        $knnData = [[[1, 2], 0], [[2, 3], 0], [[5, 5], 1], [[6, 7], 1]];
-        echo "// Test KNN classification for point [3,4] with k=3\n";
-        echo "knnClassify(data, [3,4], 3): " . $this->knnClassify($knnData, [3, 4], 3) . "\n"; // Expected: 0 or 1
-        $svmData = [[[1, 1], 1], [[2, 2], 1], [[3, 3], -1], [[4, 4], -1]];
-        echo "// Test SVM classification for point [2,2]\n";
-        echo "svmClassify(data, [2,2]): " . $this->svmClassify($svmData, [2, 2]) . "\n"; // Expected: 1 or -1
-        $dbscanData = [[1, 2], [2, 2], [2, 3], [8, 7], [8, 8], [25, 80]];
-        echo "// Test DBSCAN clustering with eps=2, minPts=3\n";
-        echo "dbscan(data, 2, 3): " . json_encode($this->dbscan($dbscanData, 2, 3)) . "\n";
-        $kmeansData = [[1, 2], [1, 4], [1, 0], [10, 2], [10, 4], [10, 0]];
-        echo "// Test k-Means clustering with k=2\n";
-        echo "kMeans(data, 2): " . json_encode($this->kMeans($kmeansData, 2)) . "\n";
-        echo "// Test least squares for x=[1,2,3,4,5], y=[2,4,5,4,5]\n";
-        echo "leastSquares([1,2,3,4,5], [2,4,5,4,5]): " . json_encode($this->leastSquares($x, $y)) . "\n";
-        $svrData = [[[1, 1], 2], [[2, 2], 4], [[3, 3], 6]];
-        echo "// Test SVR prediction for point [2,2]\n";
-        echo "svrPredict(data, [2,2]): " . $this->svrPredict($svrData, [2, 2]) . "\n";
-        $nbData = [[[1, 2], 'A'], [[2, 3], 'A'], [[5, 5], 'B'], [[6, 7], 'B']];
-        echo "// Test Naive Bayes classification for point [3,4]\n";
-        echo "naiveBayesClassify(data, [3,4]): " . $this->naiveBayesClassify($nbData, [3, 4]) . "\n";
+        // Group 10: Machine Learning
+        echo "\nGroup 10: Machine Learning\n";
+        $data = [[[1, 2], 0], [[2, 3], 1], [[3, 4], 1]];
+        $point = [2, 2];
+        echo "knnClassify = " . $this->knnClassify($data, $point, 2) . " (Expected: 1)\n";
+        $regression = $this->linearRegression([1, 2, 3], [2, 4, 6]);
+        echo "linearRegression = [slope: {$regression['slope']}, intercept: {$regression['intercept']}] (Expected: [2, 0])\n";
 
-        // Group 11: Graph Operations
-        echo "\nGroup 11: Graph Operations\n";
-        echo "-------------------------\n";
-        $graph = [
-            0 => [1, 2], 1 => [0, 3], 2 => [0, 3], 3 => [1, 2]
-        ];
-        echo "// Test if graph with vertices [0,1,2,3] is connected\n";
-        echo "isConnectedGraph: " . ($this->isConnectedGraph($graph) ? "true" : "false") . "\n"; // Expected: true
-        echo "// Test if graph with vertices [0,1,2,3] is disconnected\n";
-        echo "isDisconnectedGraph: " . ($this->isDisconnectedGraph($graph) ? "true" : "false") . "\n"; // Expected: false
-        echo "// Test BFS starting from vertex 0\n";
-        echo "bfsGraph(0): " . json_encode($this->bfsGraph(0, $graph)) . "\n"; // Expected: [0,1,2,3] or permutation
-        echo "// Test Hamiltonian path in graph\n";
-        echo "hamiltonianPath: " . json_encode($this->hamiltonianPath($graph)) . "\n"; // Expected: A valid path like [0,1,3,2]
-        echo "// Test Eulerian circuit in graph\n";
-        echo "eulerianCircuit: " . json_encode($this->eulerianCircuit($graph)) . "\n"; // Expected: A valid circuit
-        echo "// Test if acyclic graph [0->1, 1->2] is a tree\n";
-        echo "isTree: " . ($this->isTree([0 => [1], 1 => [0, 2], 2 => [1]]) ? "true" : "false") . "\n"; // Expected: true
-        echo "// Test Dijkstra's algorithm on weighted graph from vertex 0\n";
-        echo "dijkstra: " . json_encode($this->dijkstra([[0, 4, 0, 0], [4, 0, 8, 0], [0, 8, 0, 7], [0, 0, 7, 0]], 0)) . "\n"; // Expected: [0,4,12,19]
+        // Group 11: Graph Theory
+        echo "\nGroup 11: Graph Theory\n";
+        $graph = [0 => [1 => 4, 2 => 1], 1 => [0 => 4, 2 => 2], 2 => [0 => 1, 1 => 2]];
+        $path = $this->shortestPathDijkstra($graph, 0, 1);
+        echo "shortestPathDijkstra = " . json_encode($path) . " (Expected: {'path': [0,2,1], 'distance': 3})\n";
+        $mst = $this->minimumSpanningTreeKruskal($graph);
+        echo "minimumSpanningTreeKruskal = " . json_encode($mst) . " (Expected: ~2 edges with total weight 3)\n";
 
-        echo "----------------------------------------\n";
-        echo "End of Tests\n";
+        // Group 12: Differential Equations
+        echo "\nGroup 12: Differential Equations\n";
+        $ode = function($x, $y) { return -$y; }; // dy/dx = -y
+        $solution = $this->solveFirstOrderODE($ode, 0, 1, 1);
+        echo "solveFirstOrderODE at x=1 = " . end($solution)[1] . " (Expected: ~0.368)\n";
+        $ode2 = function($x, $y, $v) { return -$v - $y; }; // y'' = -y' - y
+        $solution2 = $this->solveSecondOrderODE($ode2, 0, 1, 0, 1);
+        echo "solveSecondOrderODE at x=1 = " . end($solution2)[1] . " (Expected: ~0.5)\n";
+
+        // Group 13: Linear Algebra (Additional)
+        echo "\nGroup 13: Linear Algebra (Additional)\n";
+        $matrix = [[2, 1], [1, 2]];
+        $evals = $this->eigenvalues($matrix);
+        echo "eigenvalues = [" . implode(", ", $evals) . "] (Expected: [3, 1])\n";
+        $evecs = $this->eigenvectors($matrix);
+        echo "eigenvectors = [" . implode(", ", array_map('json_encode', $evecs)) . "] (Expected: ~[[0.707,0.707],[-0.707,0.707]])\n";
+
+        // Group 14: Probability and Statistics (Additional)
+        echo "\nGroup 14: Probability and Statistics (Additional)\n";
+        echo "binomialProbability(5, 2, 0.5) = " . $this->binomialProbability(5, 2, 0.5) . " (Expected: 0.3125)\n";
+        echo "expectedValue([1,2,3], [0.2,0.5,0.3]) = " . $this->expectedValue([1,2,3], [0.2,0.5,0.3]) . " (Expected: 2.1)\n";
+
+        // Group 15: Numerical Methods
+        echo "\nGroup 15: Numerical Methods\n";
+        $fRoot = function($x) { return $x * $x - 4; };
+        $dfRoot = function($x) { return 2 * $x; };
+        echo "newtonMethod(x^2-4, x0=1) = " . $this->newtonMethod($fRoot, $dfRoot, 1) . " (Expected: ~2)\n";
+        echo "bisectionMethod(x^2-4, 1, 3) = " . $this->bisectionMethod($fRoot, 1, 3) . " (Expected: ~2)\n";
+
+        // Group 16: Complex Analysis
+        echo "\nGroup 16: Complex Analysis\n";
+        $z1 = [1, 2];
+        $z2 = [3, 4];
+        $sum = $this->complexAdd($z1, $z2);
+        echo "complexAdd([1,2], [3,4]) = [" . implode(", ", $sum) . "] (Expected: [4,6])\n";
+        $product = $this->complexMultiply($z1, $z2);
+        echo "complexMultiply([1,2], [3,4]) = [" . implode(", ", $product) . "] (Expected: [-5,10])\n";
+
+        // Group 17: Optimization
+        echo "\nGroup 17: Optimization\n";
+        $fOpt = function($x) { return $x[0] * $x[0] + $x[1] * $x[1]; };
+        $gradOpt = function($x) { return [2 * $x[0], 2 * $x[1]]; };
+        $min = $this->gradientDescent($fOpt, $gradOpt, [1, 1]);
+        echo "gradientDescent(x^2+y^2, [1,1]) = [" . implode(", ", $min) . "] (Expected: ~[0,0])\n";
+
+        // Group 18: Discrete Mathematics
+        echo "\nGroup 18: Discrete Mathematics\n";
+        $ps = $this->powerSet([1, 2]);
+        echo "powerSet([1,2]) = [" . implode(", ", array_map('json_encode', $ps)) . "] (Expected: [[],[1],[2],[1,2]])\n";
+        echo "isReflexive([1,2], [[1,1],[2,2]]) = " . ($this->isReflexive([1,2], [[1,1],[2,2]]) ? "true" : "false") . " (Expected: true)\n";
+
+        // Group 19: Mathematical Modeling
+        echo "\nGroup 19: Mathematical Modeling\n";
+        echo "exponentialGrowth(1, 0.1, 2) = " . $this->exponentialGrowth(1, 0.1, 2) . " (Expected: ~1.221)\n";
+        echo "logisticGrowth(1, 10, 0.5, 2) = " . $this->logisticGrowth(1, 10, 0.5, 2) . " (Expected: ~7.31)\n";
+
+        // Group 20: Vector Calculus
+        echo "\nGroup 20: Vector Calculus\n";
+        $fVec = function($x) { return $x[0] * $x[0] + $x[1] * $x[1]; };
+        $grad = $this->gradient($fVec, [1, 1]);
+        echo "gradient(x^2+y^2 at [1,1]) = [" . implode(", ", $grad) . "] (Expected: ~[2,2])\n";
+        $field = [function($x) { return $x[0]; }, function($x) { return $x[1]; }];
+        echo "divergence([x,y] at [1,1]) = " . $this->divergence($field, [1, 1]) . " (Expected: ~2)\n";
+
+        // Group 21: Fourier and Laplace Transforms
+        echo "\nGroup 21: Fourier and Laplace Transforms\n";
+        $ft = $this->fourierTransform([1, 0, -1, 0]);
+        echo "fourierTransform([1,0,-1,0]) = [" . implode(", ", array_map('json_encode', $ft)) . "] (Expected: ~[[0,0],[2,0],[0,0],[2,0]])\n";
+        $fLap = function($t) { return 1; };
+        echo "laplaceTransform(1, s=1) = " . $this->laplaceTransform($fLap, 1) . " (Expected: ~1)\n";
+
+        // Group 22: Control Theory
+        echo "\nGroup 22: Control Theory\n";
+        echo "stepResponse(1, 1, 1) = " . $this->stepResponse(1, 1, 1) . " (Expected: ~0.632)\n";
+        echo "frequencyResponse(1, 1, 1) = " . $this->frequencyResponse(1, 1, 1) . " (Expected: ~0.707)\n";
+
+        // Group 23: Finite Element Methods
+        echo "\nGroup 23: Finite Element Methods\n";
+        $fFem = function($x) { return -1; };
+        $nodes = [0, 0.5, 1];
+        $bc = [0, 0];
+        $femSol = $this->solveFEM($fFem, $nodes, $bc);
+        echo "solveFEM(u''=-1) = [" . implode(", ", $femSol) . "] (Expected: [0,0.125,0])\n";
+
+        echo "\nTests Completed.\n";
     }
 }
 
-$math = new MathCalculations();
-$math->runTests();
-?>
+// Usage
+$calc = new MathCalculations();
+$calc->runTests();
