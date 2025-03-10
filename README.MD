@@ -1,31 +1,54 @@
-# Scientific Calculations Library
+# PHP Science Class Library
 
-This repository contains a collection of practical scientific classes for performing various calculations in mathematics, physics, and chemistry. The classes are designed to provide easy-to-use methods for common scientific computations, making them suitable for students, educators, and professionals alike.
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## Table of Contents
 
+- [Introduction](#introduction)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Classes](#classes)
-  - [MathCalculations](#mathcalculations)
-  - [PhysicsCalculations](#physicscalculations)
-  - [ChemistryCalculations](#chemistrycalculations)
-  - [ComputerScienceCalculations](#computersciencecalculations)
-  - [AstrophysicsCalculations](#astrophysicscalculations)
-  - [GeoscienceCalculations](#geosciencecalculations)
-  - [ElectronicsCalculations](#electronicscalculations)
-  - [ThermodynamicsCalculations](#thermodynamicscalculations)
-  - [TelecommunicationsCalculations](#telecommunicationscalculations)
+- [Modules](#modules)
+  - [Architecture Calculations](#architecture-calculations)
+  - [Astrophysics Calculations](#astrophysics-calculations)
+  - [Biology Calculations](#biology-calculations)
+  - [Building Drawing Calculations](#building-drawing-calculations)
+  - [Chemistry Calculations](#chemistry-calculations)
+  - [Computer Science Calculations](#computer-science-calculations)
+  - [Electronics Calculations](#electronics-calculations)
+  - [Geoscience Calculations](#geoscience-calculations)
+  - [Mathematics Calculations](#mathematics-calculations)
+  - [Mechanics Calculations](#mechanics-calculations)
+  - [Physics Calculations](#physics-calculations)
+  - [Telecommunications Calculations](#telecommunications-calculations)
+  - [Thermodynamics Calculations](#thermodynamics-calculations)
 - [Contributing](#contributing)
 - [License](#license)
 
+## Introduction
+
+The **PHP Science Class Library** is a comprehensive collection of PHP classes designed to perform a wide array of scientific calculations. This library aims to assist developers, researchers, and students in implementing scientific computations across various disciplines, including physics, chemistry, biology, engineering, and more.
+
 ## Installation
 
-To use this library, simply clone the repository to your local machine:
+To incorporate this library into your project, use Composer:
 
-```bash
-git clone https://github.com/ildrm/php-science-class.git
-```
+    composer require your-vendor/php-science-class
+
+Replace `your-vendor` with the appropriate vendor name.
+
+## Usage
+
+After installation, you can utilize the classes as follows:
+
+    require 'vendor/autoload.php';
+
+    use YourVendor\Science\PhysicsCalculations;
+
+    $physics = new PhysicsCalculations();
+    $force = $physics->calculateForce(10, 9.81);
+    echo "Force: " . $force . " N";
+
+Ensure to replace `YourVendor` with the correct namespace.
 
 ## Classes
 
@@ -285,12 +308,225 @@ The `TelecommunicationsCalculations` class is a focused PHP utility for telecomm
 - **Friis Transmission Equation**  
   Calculates received power ($P_r = P_t G_t G_r \left(\frac{\lambda}{4\pi d}\right)^2$), integrating antenna gains, wavelength, and distance for wireless communication analysis (`friisTransmission`). For $P_t = 1 \, \text{W}$, $G_t = G_r = 1$, $\lambda = 0.3 \, \text{m}$, $d = 10 \, \text{m}$, $P_r \approx 7.16 \times 10^{-5} \, \text{W}$.
 
----
+
+List of Functions
+-----------------
+
+### ArchitectureCalculations
+
+`ArchitectureCalculations` provides methods for architectural design and structural analysis, aiding architects and engineers in computing key properties.
+
+| Function Name | Function Description | Function Scientific Description |
+| --- | --- | --- |
+| `calculateArea` | Calculate the area of a rectangle | A = length * width |
+| `calculateVolume` | Calculate the volume of a prism | V = length * width * height |
+| `calculateBeamDeflection` | Calculate beam deflection under load | δ = (F * L³) / (3 * E * I) |
+| `calculateColumnLoad` | Calculate load on a column | P = F / A |
+| `calculateFootingSize` | Calculate footing area | A = P / σ |
+
+### AstrophysicsCalculations
+
+`AstrophysicsCalculations` offers tools for astrophysical computations, useful for astronomers studying celestial mechanics and properties.
+
+| Function Name | Function Description | Function Scientific Description |
+| --- | --- | --- |
+| `calculateGravitationalForce` | Calculate gravitational force | F = G * (m₁ * m₂) / r² |
+| `calculateOrbitalVelocity` | Calculate orbital velocity | v = √(G * M / r) |
+| `calculateEscapeVelocity` | Calculate escape velocity | v = √(2 * G * M / r) |
+| `calculateLuminosity` | Calculate luminosity of a star | L = 4πr²σT⁴ |
+| `calculateRedshift` | Calculate redshift | z = (λ\_observed - λ\_rest) / λ_rest |
+
+### BiologyCalculations
+
+`BiologyCalculations` supports biological computations, assisting researchers in genetics, ecology, and biochemistry.
+
+| Function Name | Function Description | Function Scientific Description |
+| --- | --- | --- |
+| `calculatePopulationGrowth` | Calculate population growth | N(t) = N₀ * e^(r * t) |
+| `calculateHardyWeinberg` | Calculate allele frequencies | p² + 2pq + q² = 1 |
+| `calculateDNAMeltingTemp` | Calculate DNA melting temperature | Tm = 64.9 + 41 * (GC - 16.4) / N |
+| `calculateEnzymeKinetics` | Calculate enzyme reaction rate | v = V\_max * \[S\] / (K\_m + \[S\]) |
+| `calculateCellDivisionTime` | Calculate cell division time | t = ln(2) / μ |
+
+### BuildingDrawingCalculations
+
+`BuildingDrawingCalculations` facilitates calculations for building design and drafting, ideal for civil engineers and architects.
+
+| Function Name | Function Description | Function Scientific Description |
+| --- | --- | --- |
+| `calculateScaleFactor` | Calculate scale factor | SF = real\_size / drawing\_size |
+| `calculateWallLoad` | Calculate load on a wall | P = weight * height |
+| `calculateRoofPitch` | Calculate roof pitch angle | θ = atan(rise / run) |
+| `calculateFoundationDepth` | Calculate foundation depth | d = P / (σ * width) |
+| `calculateBeamSpan` | Calculate beam span | L = F / (w * σ) |
+
+### ChemistryCalculations
+
+`ChemistryCalculations` provides methods for chemical computations, supporting chemists in analyzing reactions and solutions.
+
+| Function Name | Function Description | Function Scientific Description |
+| --- | --- | --- |
+| `calculateMolarMass` | Calculate molar mass | M = Σ(atomic_mass) |
+| `calculateConcentration` | Calculate concentration | C = moles / volume |
+| `calculatePH` | Calculate pH | pH = -log₁₀\[H⁺\] |
+| `calculateReactionRate` | Calculate reaction rate | r = k * \[A\]^m * \[B\]^n |
+| `calculateEquilibriumConst` | Calculate equilibrium constant | K = \[products\] / \[reactants\] |
+
+### ComputerScienceCalculations
+
+`ComputerScienceCalculations` offers tools for computer science computations, useful for developers and analysts.
+
+| Function Name | Function Description | Function Scientific Description |
+| --- | --- | --- |
+| `calculateBigO` | Calculate Big-O complexity | O(n) |
+| `calculateHashValue` | Calculate hash value | h(k) = k % m |
+| `calculateBinaryConversion` | Convert decimal to binary | bin(decimal) |
+| `calculateNetworkBandwidth` | Calculate network bandwidth | B = data / time |
+| `calculateEncryptionTime` | Calculate encryption time | t = size / speed |
+
+### ElectronicsCalculations
+
+`ElectronicsCalculations` assists in electronics-related calculations, beneficial for electrical engineers and technicians.
+
+| Function Name | Function Description | Function Scientific Description |
+| --- | --- | --- |
+| `calculateOhmsLaw` | Calculate voltage | V = I * R |
+| `calculatePower` | Calculate power | P = V * I |
+| `calculateCapacitance` | Calculate capacitance | C = Q / V |
+| `calculateResonanceFreq` | Calculate resonance frequency | f = 1 / (2π * √(L * C)) |
+| `calculateVoltageDrop` | Calculate voltage drop | V_drop = I * R |
+
+### GeoscienceCalculations
+
+`GeoscienceCalculations` provides methods for geoscientific analysis, supporting geologists and earth scientists.
+
+| Function Name | Function Description | Function Scientific Description |
+| --- | --- | --- |
+| `calculateEarthquakeMag` | Calculate earthquake magnitude | M = log₁₀(A) + 3log₁₀(d) - 2.92 |
+| `calculatePlateVelocity` | Calculate plate velocity | v = distance / time |
+| `calculateRockDensity` | Calculate rock density | ρ = mass / volume |
+| `calculateSedimentRate` | Calculate sedimentation rate | r = thickness / time |
+| `calculateGeothermalGrad` | Calculate geothermal gradient | G = ΔT / Δz |
+
+### MathCalculations
+
+`MathCalculations` is a comprehensive class for mathematical computations, covering algebra, calculus, and more, ideal for students and researchers.
+
+| Function Name | Function Description | Function Scientific Description |
+| --- | --- | --- |
+| `add` | Add two numbers | a + b |
+| `subtract` | Subtract two numbers | a - b |
+| `multiply` | Multiply two numbers | a * b |
+| `divide` | Divide two numbers | a / b |
+| `quadraticFormula` | Solve quadratic equation | ax² + bx + c = 0 |
+| `absoluteValue` | Calculate absolute value | \|x\| |
+| `power` | Raise to a power | x^y |
+| `squareRoot` | Calculate square root | √x  |
+
+### MechanicsCalculations
+
+`MechanicsCalculations` supports mechanics computations, useful for engineers and physicists studying motion and forces.
+
+| Function Name | Function Description | Function Scientific Description |
+| --- | --- | --- |
+| `calculateForce` | Calculate force | F = m * a |
+| `calculateWork` | Calculate work | W = F * d * cos(θ) |
+| `calculateKineticEnergy` | Calculate kinetic energy | KE = ½ * m * v² |
+| `calculateMomentum` | Calculate momentum | p = m * v |
+| `calculateTorque` | Calculate torque | τ = F * r * sin(θ) |
+
+### PhysicsCalculations
+
+`PhysicsCalculations` provides tools for physical computations, aiding physicists in various domains.
+
+| Function Name | Function Description | Function Scientific Description |
+| --- | --- | --- |
+| `calculateAcceleration` | Calculate acceleration | a = Δv / Δt |
+| `calculateEnergy` | Calculate potential energy | PE = m * g * h |
+| `calculateWaveSpeed` | Calculate wave speed | v = f * λ |
+| `calculatePressure` | Calculate pressure | P = F / A |
+| `calculateDensity` | Calculate density | ρ = m / V |
+
+### TelecommunicationsCalculations
+
+`TelecommunicationsCalculations` facilitates calculations for telecommunications systems, useful for engineers in signal processing.
+
+| Function Name | Function Description | Function Scientific Description |
+| --- | --- | --- |
+| `calculateSignalPower` | Calculate signal power | P = V² / R |
+| `calculateBandwidth` | Calculate bandwidth | B = f\_max - f\_min |
+| `calculateSNR` | Calculate signal-to-noise ratio | SNR = P\_signal / P\_noise |
+| `calculateDataRate` | Calculate data rate | R = B * log₂(1 + SNR) |
+| `calculateAttenuation` | Calculate attenuation | A = 10 * log₁₀(P\_in / P\_out) |
+
+### ThermodynamicsCalculations
+
+`ThermodynamicsCalculations` offers methods for thermodynamic analysis, supporting engineers and scientists in energy studies.
+
+| Function Name | Function Description | Function Scientific Description |
+| --- | --- | --- |
+| `calculateHeatTransfer` | Calculate heat transfer | Q = m * c * ΔT |
+| `calculateEntropyChange` | Calculate entropy change | ΔS = Q / T |
+| `calculateWorkDone` | Calculate work done | W = P * ΔV |
+| `calculateEfficiency` | Calculate efficiency | η = W / Q_in |
+| `calculatePressureVolume` | Calculate pressure-volume relation | P * V = n * R * T |
+
+### Architecture Calculations
+
+Provides methods for architectural computations, such as structural analysis and material estimations.
+
+### Astrophysics Calculations
+
+Offers functions to compute celestial mechanics, stellar properties, and cosmological parameters.
+
+### Biology Calculations
+
+Includes tools for modeling biological processes, population dynamics, and genetic probabilities.
+
+### Building Drawing Calculations
+
+Assists in generating and interpreting building plans, including area calculations and material requirements.
+
+### Chemistry Calculations
+
+Features functions for chemical reaction kinetics, equilibrium constants, and molecular properties.
+
+### Computer Science Calculations
+
+Contains algorithms for computational theory, data structures, and complexity analysis.
+
+### Electronics Calculations
+
+Provides methods to analyze electrical circuits, signal processing, and semiconductor properties.
+
+### Geoscience Calculations
+
+Offers tools for geological surveys, seismic analysis, and resource estimations.
+
+### Mathematics Calculations
+
+Includes a wide range of mathematical functions, from basic arithmetic to advanced calculus and linear algebra.
+
+### Mechanics Calculations
+
+Assists in solving problems related to classical mechanics, including kinematics and dynamics.
+
+### Physics Calculations
+
+Features comprehensive tools for various physics computations, such as optics, thermodynamics, and electromagnetism.
+
+### Telecommunications Calculations
+
+Provides methods for analyzing communication systems, signal propagation, and network performance.
+
+### Thermodynamics Calculations
+
+Offers functions to compute thermodynamic properties, phase transitions, and energy transformations.
 
 ## Contributing
 
-Contributions are welcome! If you have suggestions for improvements or new features, please open an issue or submit a pull request.
+We welcome contributions from the community. Please read our [Contributing Guidelines](CONTRIBUTING.md) to get started.
 
 ## License
 
-This project is licensed under the MIT License - see the  LICENSE  file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
