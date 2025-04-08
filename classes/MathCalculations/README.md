@@ -1,5 +1,3 @@
- MathCalculations - PHP Science Class body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; max-width: 1200px; margin-left: auto; margin-right: auto; } h1, h2, h3 { color: #333; } code { background-color: #f4f4f4; padding: 2px 6px; border-radius: 4px; } pre { background-color: #f4f4f4; padding: 10px; border-radius: 4px; overflow-x: auto; } ul { list-style-type: disc; margin-left: 20px; } a { color: #0066cc; text-decoration: none; } a:hover { text-decoration: underline; } table { width: 100%; border-collapse: collapse; margin: 20px 0; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; color: #333; } tr:nth-child(even) { background-color: #f9f9f9; } tr:hover { background-color: #f5f5f5; } 
-
 MathCalculations - PHP Science Class
 ====================================
 
